@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enterprise | Premium Araç Galerisi</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <style>
+        :root {
+            --p2-purple: #6c5ce7;
+            --bg: #f5f7fa;
+            --card-bg: #ffffff;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg);
+            margin: 0;
+            padding: 90px 20px 40px 20px;
+            min-height: 100vh;
+        }
+
+        /* --- LOADING EKRANI --- */
+        #loadingOverlay {
+            position: fixed; inset: 0; background: rgba(255,255,255,0.9); 
+            backdrop-filter: blur(10px); z-index: 9999; display: flex;
+            flex-direction: column; justify-content: center; align-items: center;
+        }
+        .spinner {
+            width: 50px; height: 50px; border: 5px solid rgba(108, 92, 231, 0.2);
+            border-top: 5px solid var(--p2-purple); border-radius: 50%;
+            animation: spin 1s linear infinite; margin-bottom: 15px;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* --- GERİ DÖN BUTONU --- */
+        .back-nav { position: fixed; top: 20px; left: 20px; z-index: 1000; }
+        .back-btn {
+            background: white; border: none; padding: 12px 24px;
+            border-radius: 50px; font-weight: 700; color: var(--p2-purple);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1); cursor: pointer;
+            display: flex; align-items: center; gap: 10px;
+            text-decoration: none; font-size: 14px; transition: 0.3s;
+        }
+        .back-btn:hover { background: var(--p2-purple); color: white; transform: translateX(-5px); }
+
+        h1 { text-align: center; color: #2c3e50; font-size: 1.8rem; font-weight: 700; margin-bottom: 5px; text-transform: uppercase; }
+        .subtitle { text-align: center; color: #7f8c8d; margin-bottom: 30px; font-size: 0.9rem; }
+
+        /* FİLTRELEME */
+        .filter-container {
+            display: flex; justify-content: center; flex-wrap: wrap; gap: 8px;
+            margin-bottom: 30px;
+        }
+        .filter-btn {
+            background: white; border: 1px solid #ddd; padding: 10px 20px;
+            border-radius: 25px; cursor: pointer; font-weight: 600; font-size: 13px;
+            transition: 0.3s; color: #555;
+        }
+        .filter-btn.active { background: var(--p2-purple); color: white; border-color: var(--p2-purple); box-shadow: 0 4px 10px rgba(108, 92, 231, 0.3); }
+
+        /* GALERİ VE ÖZEL HOVER ANİMASYONU */
+        .gallery-container {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px; max-width: 1200px; margin: 0 auto;
+            perspective: 1000px;
+        }
+        .car-card {
+            background: white; border-radius: 25px; overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05); cursor: pointer;
+            display: flex; flex-direction: column;
+            /* İstediğin o akıcı zıplama efekti */
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid rgba(0,0,0,0.02);
+        }
+        .car-card:hover { 
+            transform: translateY(-12px) scale(1.02); 
+            box-shadow: 0 20px 40px rgba(108, 92, 231, 0.18);
+            border-color: rgba(108, 92, 231, 0.2);
+        }
+
+        .img-wrapper {
+            width: 100%; height: 180px;
+            display: flex; justify-content: center; align-items: center;
+            padding: 15px; background: #fcfcfc; overflow: hidden;
+        }
+        .car-card img {
+            max-width: 90%; max-height: 90%; object-fit: contain;
+            transition: transform 0.4s ease;
+        }
+        .car-card:hover img { transform: scale(1.08); }
+
+        .car-info { padding: 20px; text-align: center; border-top: 1px solid #f5f5f5; }
+        .car-info h3 { margin: 0; font-size: 1.1rem; color: #2d3436; font-weight: 700; }
+        .click-hint { font-size: 11px; color: var(--p2-purple); font-weight: 800; margin-top: 8px; letter-spacing: 1px; }
+
+        /* MODAL */
+        .modal {
+            display: none; position: fixed; inset: 0; z-index: 2000;
+            background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
+            justify-content: center; align-items: center; padding: 20px;
+        }
+        .modal.show { display: flex; }
+        .modal-content {
+            background: white; border-radius: 30px; width: 100%; max-width: 500px;
+            overflow: hidden; animation: modalPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes modalPop { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .modal-img-box { background: #f8f9fa; padding: 40px; text-align: center; position: relative; }
+        .modal-img-box img { max-width: 100%; height: 180px; object-fit: contain; }
+        .close-modal { position: absolute; top: 15px; right: 20px; cursor: pointer; font-size: 28px; color: #333; font-weight: bold; }
+        .modal-body { padding: 30px; }
+        .feature-tag {
+            display: inline-block; background: #f1f2f6; padding: 6px 14px;
+            border-radius: 10px; font-size: 12px; font-weight: 600; margin: 4px; color: #2d3436;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="loadingOverlay">
+        <div class="spinner"></div>
+        <div style="font-weight: 700; color: var(--p2-purple); letter-spacing: 1px;">KATALOG YÜKLENİYOR...</div>
+    </div>
+
+    <div class="back-nav">
+        <a href="javascript:void(0)" class="back-btn" onclick="goBack()">
+            <i class="fas fa-chevron-left"></i> GERİ DÖN
+        </a>
+    </div>
+
+    <h1>ARAÇ FİLOMUZ</h1>
+    <p class="subtitle">2025 Model Premium Araç Seçenekleri</p>
+
+    <div class="filter-container">
+        <button class="filter-btn active" onclick="filtrele('tumu', this)">Tümü</button>
+        <button class="filter-btn" onclick="filtrele('Benzin', this)">Benzin</button>
+        <button class="filter-btn" onclick="filtrele('Dizel', this)">Dizel</button>
+        <button class="filter-btn" onclick="filtrele('Elektrik', this)">Elektrik</button>
+        <button class="filter-btn" onclick="filtrele('Hybrid', this)">Hybrid</button>
+    </div>
+    
+    <div class="gallery-container" id="gallery"></div>
+
+    <div id="carModal" class="modal" onclick="closeModal()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-img-box">
+                <span class="close-modal" onclick="closeModal()">&times;</span>
+                <img src="" id="modalImg">
+            </div>
+            <div class="modal-body">
+                <h2 id="modalTitle" style="margin-bottom:10px; color:#2c3e50;"></h2>
+                <p id="modalDesc" style="color:#636e72; font-size:14px; margin-bottom:20px; line-height:1.6;"></p>
+                <div id="modalFeatures"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const aracListesi = [
+            { id: 1, baslik: "Hyundai i20", img: "https://www.enterprise.com.tr/upload/vehicles/imagew/570/i20_639010572959134936.png", aciklama: "I20 1.0 T-GDI JUMP 100HP DCT. Şehir içi çeviklik ve modern tasarım bir arada.", ozellikler: ["Benzin", "Otomatik", "2025"] },
+            { id: 2, baslik: "Opel Corsa", img: "https://www.enterprise.com.tr/upload/vehicles/imagew/352/corsasol.png", aciklama: "CORSA 1.2 GS 100HP AT8. Alman mühendisliği ile sportif sürüş keyfi.", ozellikler: ["Benzin", "Otomatik", "2025"] },
+            { id: 3, baslik: "Renault Clio", img: "https://www.enterprise.com.tr/upload/vehicles/imagew/352/cliosol.png", aciklama: "CLIO TECHNO ESPRIT 90HP. Ekonomik sürüş ve yenilenen tasarımıyla öne çıkıyor.", ozellikler: ["Benzin", "Otomatik", "2025"] },
+            { id: 4, baslik: "Ford Tourneo Courier", img: "https://www.enterprise.com.tr/upload/vehicles/imagew/352/fordtourneo_639010618742097860.png", aciklama: "TITANIUM 125HP AT. Geniş iç hacmiyle hem iş hem de aile kullanımı için ideal.", ozellikler: ["Dizel", "Otomatik", "2025"] },
+            { id: 5, baslik: "Hyundai Bayon", img: "https://www.enterprise.com.tr/upload/vehicles/imagew/352/bayon.png", aciklama: "1.0 T-GDI 100HP. Şehir içi SUV konforunu en üst seviyede yaşayın.", ozellikler: ["Benzin", "Otomatik", "2025"] },
+            { id: 6, baslik: "Skoda Scala", img: "https://www.enterprise.com.tr/upload/vehicles/imagew/352/skodaskala.png", aciklama: "ELITE 115HP DSG. Sınıfının en geniş iç hacmi ve konforlu sürüşü.", ozellikler: ["Benzin", "Otomatik", "2025"] },
+            { id: 7, baslik: "Peugeot 2008", img: "https://www.enterprise.com.tr/upload/vehicles/imagew/352/peugeot2008.png", aciklama: "GT 130HP AT. Fütüristik i-Cockpit tasarımı ve güçlü performans.", ozellikler: ["Benzin", "Otomatik", "2025"] },
+            { id: 8, baslik: "Skoda Kamiq", img: "https://araclistele.com/photos/6210cd70a3d09.png", aciklama: "ELITE 1.0 TSI. Şehir içi SUV konforunu Skoda kalitesiyle deneyimleyin.", ozellikler: ["Benzin", "Otomatik", "2025"] },
+            { id: 9, baslik: "Nissan Qashqai", img: "https://www.enterprise.ch/hs-fs/hubfs/Nissan%20Qashqai%20MHEV%204x4%20front-1.png?width=595&height=400&name=Nissan%20Qashqai%20MHEV%204x4%20front-1.png", aciklama: "MHEV SKYPACK. Hafif hibrit teknolojisi ve üstün teknolojik donanım.", ozellikler: ["Benzin", "Hybrid", "Otomatik", "2025"] },
+            { id: 10, baslik: "Peugeot 3008", img: "https://www.enterprise.com.tr/upload/vehicles/imagew/352/peugeot3008_639010563837329535.png", aciklama: "ALLURE HYBRID 145HP. Modern tasarım, yüksek verimlilik ve konfor.", ozellikler: ["Hybrid", "Otomatik", "2025"] },
+            { id: 11, baslik: "BMW 1.20", img: "https://www.enterprise.com.tr/upload/vehicles/imagew/352/bmw1.png", aciklama: "M SPORT 170HP. BMW'nin imza sürüş dinamikleri şimdi daha sportif.", ozellikler: ["Benzin", "Otomatik", "2025"] },
+            { id: 12, baslik: "Mini Countryman", img: "https://www.enterprise.com.tr/upload/vehicles/imagew/352/countryman_639010619059620663.png", aciklama: "FAVOURED BEV 204HP. Tamamen elektrikli, ikonik Mini tarzı.", ozellikler: ["Elektrik", "Otomatik", "2025"] },
+            { id: 13, baslik: "BMW iX1", img: "https://www.enterprise.com.tr/upload/vehicles/imagew/352/bmwix1_639010612872005685.png", aciklama: "Tamamen elektrikli SAV deneyimi ile geleceğe sürün.", ozellikler: ["Elektrik", "Otomatik", "2025"] },
+            { id: 14, baslik: "BMW Plug-in X1", img: "https://www.enterprise.com.tr/upload/vehicles/imagew/352/bmwx1_639010588269347145.png", aciklama: "PHEV X LINE. Hem elektrikli hem benzinli motorun mükemmel uyumu.", ozellikler: ["Hybrid", "Otomatik", "2025"] },
+            { id: 15, baslik: "BMW 5.20", img: "https://www.enterprise.com.tr/upload/vehicles/imagew/352/bmwi5sol.png", aciklama: "520I M SPORT 190HP. Üst düzey prestij ve konforun buluşma noktası.", ozellikler: ["Benzin", "Otomatik", "2025"] },
+            { id: 16, baslik: "BMW X3", img: "https://www.enterprise.com.tr/upload/vehicles/imagew/352/bmwx3.png", aciklama: "XDRIVE. Her türlü yol koşulunda sarsılmaz bir hakimiyet.", ozellikler: ["Benzin", "Otomatik", "2025"] },
+            { id: 17, baslik: "Mercedes Vito / Ford Custom", img: "https://www.enterprise.com.tr/upload/vehicles/imagew/352/mercedesvitosol638979533869680417.png", aciklama: "Geniş hacim ve VIP konforu ile grup seyahatleri için eşsiz.", ozellikler: ["Dizel", "Otomatik", "2024"] }
+        ];
+
+        const gallery = document.getElementById('gallery');
+        const overlay = document.getElementById('loadingOverlay');
+
+        function goBack() {
+            overlay.style.display = 'flex';
+            setTimeout(() => { window.location.replace('index.html'); }, 600);
+        }
+
+        function galeriyiGoster(liste) {
+            gallery.innerHTML = '';
+            liste.forEach(arac => {
+                const card = document.createElement('div');
+                card.className = 'car-card';
+                card.onclick = () => openModal(arac);
+                card.innerHTML = `
+                    <div class="img-wrapper"><img src="${arac.img}" loading="lazy"></div>
+                    <div class="car-info">
+                        <h3>${arac.baslik}</h3>
+                        <div class="click-hint">DETAYLARI GÖR</div>
+                    </div>
+                `;
+                gallery.appendChild(card);
+            });
+        }
+
+        function filtrele(kriter, buton) {
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            buton.classList.add('active');
+            const filtrelenmis = kriter === 'tumu' ? aracListesi : aracListesi.filter(a => a.ozellikler.includes(kriter));
+            galeriyiGoster(filtrelenmis);
+        }
+
+        function openModal(arac) {
+            document.getElementById('modalImg').src = arac.img;
+            document.getElementById('modalTitle').innerText = arac.baslik;
+            document.getElementById('modalDesc').innerText = arac.aciklama;
+            const features = document.getElementById('modalFeatures');
+            features.innerHTML = '';
+            arac.ozellikler.forEach(f => {
+                const span = document.createElement('span');
+                span.className = 'feature-tag';
+                span.innerText = f;
+                features.appendChild(span);
+            });
+            document.getElementById('carModal').classList.add('show');
+        }
+
+        function closeModal() { document.getElementById('carModal').classList.remove('show'); }
+
+        window.onload = () => {
+            galeriyiGoster(aracListesi);
+            setTimeout(() => { overlay.style.display = 'none'; }, 600);
+        };
+    </script>
+</body>
+</html>

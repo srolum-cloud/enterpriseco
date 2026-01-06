@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enterprise Paketler - Premium Dark</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Tam siyah yerine daha yumuşak, yeşilimsi derin antrasit */
+        body { background-color: #0c1412; font-family: 'Inter', sans-serif; color: #f1f5f9; transition: all 0.3s; }
+        
+        /* Kartların içindeki yeşil geçişini biraz daha aydınlattık */
+        .package-card { 
+            background: linear-gradient(145deg, #023d31, #001a14); 
+            border: 1px solid rgba(16, 185, 129, 0.2); 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        }
+        
+        .price-box { border: 2px dashed rgba(255, 255, 255, 0.15); background-color: rgba(0, 0, 0, 0.4); }
+        .btn-green { background-color: #10b981; transition: all 0.2s; color: white; }
+        .btn-green:hover { background-color: #059669; box-shadow: 0 0 20px rgba(16, 185, 129, 0.4); }
+        
+        @keyframes shine-pulse {
+            0% { transform: translateX(-50%) scale(1); box-shadow: 0 0 5px rgba(250, 204, 21, 0.4); }
+            50% { transform: translateX(-50%) scale(1.05); box-shadow: 0 0 20px rgba(250, 204, 21, 0.8); }
+            100% { transform: translateX(-50%) scale(1); box-shadow: 0 0 5px rgba(250, 204, 21, 0.4); }
+        }
+        .animate-popular { animation: shine-pulse 2s infinite ease-in-out; }
+        .flag-btn { cursor: pointer; transition: transform 0.2s; opacity: 0.4; filter: grayscale(50%); }
+        .flag-btn.active { opacity: 1; transform: scale(1.2); filter: grayscale(0%); border-bottom: 2px solid #10b981; }
+        
+        .whatsapp-float {
+            position: fixed; width: 60px; height: 60px; bottom: 30px; right: 30px;
+            background-color: #25d366; color: #FFF; border-radius: 50px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.4); z-index: 100;
+        }
+    </style>
+</head>
+<body class="p-4">
+<div class="max-w-4xl mx-auto mb-6">
+    <a href="index.html" class="inline-flex items-center gap-2 text-white/70 hover:text-[#10b981] transition-colors font-medium">
+        <i class="fas fa-arrow-left"></i>
+        <span>Ana Panele Dön</span>
+    </a>
+</div>
+    <a href="#" id="wa-button" class="whatsapp-float" target="_blank">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
+    <div class="flex justify-center gap-6 mb-6 mt-4">
+        <img src="https://flagcdn.com/w40/tr.png" onclick="changeLanguage('tr')" class="flag-btn active w-8 h-6 object-cover" id="lang-tr" alt="TR">
+        <img src="https://flagcdn.com/w40/gb.png" onclick="changeLanguage('en')" class="flag-btn w-8 h-6 object-cover" id="lang-en" alt="EN">
+        <img src="https://flagcdn.com/w40/ru.png" onclick="changeLanguage('ru')" class="flag-btn w-8 h-6 object-cover" id="lang-ru" alt="RU">
+    </div>
+
+    <div class="max-w-md mx-auto space-y-6 pb-24">
+        <div class="flex justify-center py-4">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNbJgURb6kZouZC-vBedYpXf5SVvncmNEihQ&s" alt="Enterprise Logo" class="max-h-14 object-contain brightness-125">
+        </div>
+        <div id="packages-container" class="space-y-6"></div>
+    </div>
+
+    <div id="detailsModal" class="fixed inset-0 bg-black/85 hidden items-center justify-center p-6 z-[110] backdrop-blur-md">
+        <div id="modalBox" class="bg-[#141d1a] border border-emerald-900/40 w-full max-w-sm rounded-[2.5rem] overflow-hidden shadow-2xl scale-95 transition-transform duration-300">
+            <div class="bg-emerald-900/80 p-5 text-emerald-50 text-center text-xl font-bold italic uppercase tracking-widest border-b border-emerald-800">
+                <h3 id="modalTitle">Paket Bilgisi</h3>
+            </div>
+            <div class="p-8">
+                <div id="modalDescription" class="text-slate-200 text-center mb-8 font-medium leading-relaxed italic text-base"></div>
+                <button onclick="closeModal()" id="modalCloseBtn" class="w-full bg-emerald-500 text-white font-bold py-4 rounded-2xl uppercase shadow-lg active:scale-95 transition-transform">Kapat</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const translations = {
+            tr: {
+                popular: "En Çok Tercih Edilen",
+                detailsBtn: "Detayları Gör",
+                closeBtn: "Kapat",
+                modalTitleSuffix: " DETAYI",
+                waMessage: "Merhaba, araç kiralama paketleri hakkında bilgi almak istiyorum.",
+                packages: [
+                    { id: 'BASIC', name: 'Basic', star: '★', price: '449 ₺', items: ['8000 ₺ Dış Aksam', '• Ön Cam Lastik Far'], desc: 'Dış aksamda 8000 ₺ ye kadar koruma, Ön cam lastik ve farda bir parça değişen hakkı sunar.' },
+                    { id: 'STANDART', name: 'Standart', star: '★★', price: '529 ₺', items: ['10000 ₺ Dış Aksam', '• Ön Cam Lastik Far', '• İhtiyari Mali Mesuliyet', '• Ferdi Kaza'], desc: 'Dış aksamda 10000 ₺ ye kadar koruma, Ön cam lastik ve farda bir parça değişen hakkı sunar, Kusurlu olduğunuz durumlarda karşı tarafın 1.000.000 ₺ ye kadar değer kaybını karşılar, Sürücü ve araç içindeki yolcuların sigorta limitleri dahilinde güvenceye alır.' },
+                    { id: 'PREMIUM', name: 'Premium', star: '★★★', price: '629 ₺', isPopular: true, items: ['12000 ₺ Dış Aksam', '• Ön Cam Lastik Far', '• İhtiyari Mali Mesuliyet', '• Ferdi Kaza'], desc: 'Dış aksamda 12000 ₺ ye kadar koruma, Ön cam lastik ve farda bir parça değişen hakkı sunar, Kusurlu olduğunuz durumlarda karşı tarafın 1.000.000 ₺ ye kadar değer kaybını karşılar, Sürücü ve araç içindeki yolcuların sigorta limitleri dahilinde güvenceye alır.' },
+                    { id: 'GOLD', name: 'Gold', star: '★★★★', price: '1180 ₺', items: ['25000 ₺ Dış Aksam', '• Ön Cam Lastik Far (2 Parça)', '• İhtiyari Mali Mesuliyet', '• Ferdi Kaza'], desc: 'Dış aksamda 25000 ₺ ye kadar koruma, Ön cam lastik ve farda iki parça değişen hakkı sunar, Kusurlu olduğunuz durumlarda karşı tarafın 1.000.000 ₺ ye kadar değer kaybını karşılar, Sürücü ve araç içindeki yolcuların sigorta limitleri dahilinde güvenceye alır.' }
+                ]
+            },
+            en: {
+                popular: "Most Popular",
+                detailsBtn: "View Details",
+                closeBtn: "Close",
+                modalTitleSuffix: " DETAILS",
+                waMessage: "Hello, I would like to get information about car rental packages.",
+                packages: [
+                    { id: 'BASIC', name: 'Basic', star: '★', price: '449 ₺', items: ['8000 ₺ Exterior Protection', '• Windshield Tire Lights'], desc: 'Exterior protection up to 8000 ₺, Covers replacement of one part for windshield, tires, or lights.' },
+                    { id: 'STANDART', name: 'Standart', star: '★★', price: '529 ₺', items: ['10000 ₺ Exterior Protection', '• Windshield Tire Lights', '• Third Party Liability', '• Personal Accident'], desc: 'Exterior protection up to 10000 ₺, Covers replacement of one part for windshield/tires/lights, Third party liability coverage up to 1.000.000 ₺, Protects driver and passengers within insurance limits.' },
+                    { id: 'PREMIUM', name: 'Premium', star: '★★★', price: '629 ₺', isPopular: true, items: ['12000 ₺ Exterior Protection', '• Windshield Tire Lights', '• Third Party Liability', '• Personal Accident'], desc: 'Exterior protection up to 12000 ₺, Covers replacement of one part for windshield/tires/lights, Third party liability coverage up to 1.000.000 ₺, Full protection for driver and passengers.' },
+                    { id: 'GOLD', name: 'Gold', star: '★★★★', price: '1180 ₺', items: ['25000 ₺ Exterior Protection', '• Windshield Tire Lights (2 Parts)', '• Third Party Liability', '• Personal Accident'], desc: 'Maximum exterior protection 25000 ₺, Covers replacement of two parts for windshield/tires/lights, High limit third party liability and accident coverage.' }
+                ]
+            },
+            ru: {
+                popular: "Самый Популярный",
+                detailsBtn: "Подробнее",
+                closeBtn: "Закрыть",
+                modalTitleSuffix: " ДЕТАЛИ",
+                waMessage: "Здравствуйте, я хотел бы получить информацию о пакетах аренды автомобилей.",
+                packages: [
+                    { id: 'BASIC', name: 'Basic', star: '★', price: '449 ₺', items: ['8000 ₺ Защита кузова', '• Стекло Шины Фары'], desc: 'Защита кузова до 8000 ₺, Покрывает замену одной детали (стекло, шины или фары).' },
+                    { id: 'STANDART', name: 'Standart', star: '★★', price: '529 ₺', items: ['10000 ₺ Защита кузова', '• Стекло Шины Фары', '• Ответственность перед третьими лицами', '• Страхование от несчастных случаев'], desc: 'Защита кузова до 10000 ₺, Замена одной детали (стекло/шины/фары), Покрытие ответственности до 1.000.000 ₺, Защита водителя и пассажиров.' },
+                    { id: 'PREMIUM', name: 'Premium', star: '★★★', price: '629 ₺', isPopular: true, items: ['12000 ₺ Защита кузова', '• Стекло Шины Фары', '• Ответственность перед третьими лицами', '• Страхование от несчастных случаев'], desc: 'Защита кузова до 12000 ₺, Замена одной детали (стекло/шины/фары), Покрытие ответственности до 1.000.000 ₺, Полная защита водителя и пассажиров.' },
+                    { id: 'GOLD', name: 'Gold', star: '★★★★', price: '1180 ₺', items: ['25000 ₺ Защита кузова', '• Стекло Шины Фары (2 детали)', '• Ответственность перед третьими лицами', '• Страхование от несчастных случаев'], desc: 'Максимальная защита кузова 25000 ₺, Замена двух деталей (стекло/шины/фары), Высокие лимиты страхования ответственности и пассажиров.' }
+                ]
+            }
+        };
+
+        let currentLang = 'tr';
+        const phone = "905348901032";
+
+        function changeLanguage(lang) {
+            currentLang = lang;
+            document.querySelectorAll('.flag-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`lang-${lang}`).classList.add('active');
+            const waButton = document.getElementById('wa-button');
+            const message = translations[lang].waMessage;
+            waButton.href = "https://wa.me/" + phone + "?text=" + encodeURIComponent(message);
+            renderPackages();
+        }
+
+        function renderPackages() {
+            const data = translations[currentLang];
+            const container = document.getElementById('packages-container');
+            container.innerHTML = '';
+            data.packages.forEach(pkg => {
+                const card = document.createElement('div');
+                card.className = `package-card text-white rounded-3xl p-6 shadow-2xl relative ${pkg.isPopular ? 'ring-2 ring-emerald-500/50' : ''} ${pkg.id === 'GOLD' ? 'border-2 border-yellow-500/40' : ''}`;
+                let popularBadge = pkg.isPopular ? `<div class="animate-popular absolute -top-3 left-1/2 bg-yellow-400 text-black text-[10px] font-black px-4 py-1.5 rounded-full uppercase tracking-tighter whitespace-nowrap z-10">${data.popular}</div>` : '';
+                
+                card.innerHTML = `
+                    ${popularBadge}
+                    <div class="flex justify-between items-center mb-6 ${pkg.isPopular ? 'mt-2' : ''}">
+                        <h2 class="text-2xl font-bold tracking-tighter uppercase italic ${pkg.id === 'GOLD' ? 'text-yellow-400' : 'text-emerald-400'}">${pkg.name}</h2>
+                        <div class="flex text-yellow-400">${pkg.star}</div>
+                    </div>
+                    <div class="space-y-2 mb-8 text-lg font-medium italic text-slate-200">
+                        ${pkg.items.map(item => `<p>${item}</p>`).join('')}
+                    </div>
+                    <div class="price-box rounded-2xl py-4 text-center mb-4">
+                        <span class="text-3xl font-bold ${pkg.id === 'GOLD' ? 'text-yellow-300' : 'text-white'}">${pkg.price}</span>
+                    </div>
+                    <button onclick="openModal('${pkg.name}', '${pkg.desc}')" class="w-full ${pkg.id === 'GOLD' ? 'bg-yellow-500 text-black hover:bg-yellow-400' : 'btn-green text-white'} font-bold py-3 rounded-xl uppercase tracking-wider active:scale-95 transition-transform">${data.detailsBtn}</button>
+                `;
+                container.appendChild(card);
+            });
+            document.getElementById('modalCloseBtn').innerText = data.closeBtn;
+        }
+
+        function openModal(title, description) {
+            document.getElementById('modalTitle').innerText = title + translations[currentLang].modalTitleSuffix;
+            document.getElementById('modalDescription').innerHTML = description.replace(/,/g, ',<br><br>');
+            document.getElementById('detailsModal').classList.remove('hidden');
+            document.getElementById('detailsModal').classList.add('flex');
+            setTimeout(() => { document.getElementById('modalBox').classList.add('modal-active'); }, 10);
+        }
+
+        function closeModal() {
+            document.getElementById('modalBox').classList.remove('modal-active');
+            setTimeout(() => { 
+                document.getElementById('detailsModal').classList.add('hidden'); 
+                document.getElementById('detailsModal').classList.remove('flex'); 
+            }, 300);
+        }
+
+        window.onclick = function(event) { if (event.target == document.getElementById('detailsModal')) closeModal(); }
+        changeLanguage('tr');
+    </script>
+</body>
+</html>

@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enterprise | Yakıt & Maliyet Takibi</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --success-color: #4cc9f0;
+            --bg-color: #f0f3f7;
+            --text-dark: #2b2d42;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .fuel-card {
+            background: #ffffff;
+            border-radius: 30px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.05);
+            width: 100%;
+            max-width: 450px;
+            padding: 40px;
+            border: 1px solid #f0f0f0;
+            position: relative;
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            text-decoration: none;
+            color: var(--primary-color);
+            font-weight: 600;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .card-header {
+            text-align: center;
+            margin-bottom: 30px;
+            margin-top: 10px;
+        }
+
+        .card-header h2 {
+            margin: 0;
+            color: var(--text-dark);
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .card-header p {
+            color: #8d99ae;
+            font-size: 14px;
+            margin-top: 8px;
+        }
+
+        .grid-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .full-width { grid-column: span 2; }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 11px;
+            font-weight: 700;
+            color: #4a5568;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-wrapper input {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #edf2f7;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            outline: none;
+            background: #f8fafc;
+        }
+
+        .input-wrapper input:focus {
+            border-color: var(--primary-color);
+            background-color: #fff;
+            box-shadow: 0 0 0 4px rgba(67, 97, 238, 0.1);
+        }
+
+        .unit {
+            position: absolute;
+            right: 12px;
+            color: #a0aec0;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .calc-btn {
+            width: 100%;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 15px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(67, 97, 238, 0.2);
+            margin-top: 10px;
+        }
+
+        .calc-btn:hover {
+            background: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+
+        .results-container {
+            display: none;
+            margin-top: 30px;
+            border-top: 2px dashed #edf2f7;
+            padding-top: 25px;
+            animation: slideUp 0.4s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .result-item {
+            background: #f8faff;
+            padding: 15px;
+            border-radius: 15px;
+            text-align: center;
+            border: 1px solid #f0f4ff;
+        }
+
+        .result-item.highlight {
+            grid-column: span 2;
+            background: #eef2ff;
+            border: 1px solid #e0e7ff;
+        }
+
+        .res-label {
+            display: block;
+            font-size: 10px;
+            color: #64748b;
+            text-transform: uppercase;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .res-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .res-value span { font-size: 14px; font-weight: 600; margin-left: 3px; color: var(--primary-color); }
+    </style>
+</head>
+<body>
+
+<div class="fuel-card">
+    <a href="index.html" class="back-btn" id="btnBack"><i class="fas fa-arrow-left"></i> Geri</a>
+
+    <div class="card-header">
+        <h2 id="title">🚗 Akıllı Yakıt Paneli</h2>
+        <p id="subtitle">Tüketim ve maliyet analizi</p>
+    </div>
+
+    <div class="grid-inputs">
+        <div class="input-group full-width">
+            <label id="lblPrice">Litre Fiyatı</label>
+            <div class="input-wrapper">
+                <input type="number" id="birimFiyat" placeholder="0.00" step="0.01">
+                <span class="unit" id="unitPrice">₺ / LT</span>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label id="lblFuel">Alınan Yakıt</label>
+            <div class="input-wrapper">
+                <input type="number" id="litre" placeholder="0.00">
+                <span class="unit" id="unitLitre">Litre</span>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label id="lblWay">Gidilen Yol</label>
+            <div class="input-wrapper">
+                <input type="number" id="km" placeholder="0">
+                <span class="unit">KM</span>
+            </div>
+        </div>
+    </div>
+
+    <button class="calc-btn" id="btnCalc" onclick="analizEt()">Hesapla ve Analiz Et</button>
+
+    <div id="results" class="results-container">
+        <div class="result-grid">
+            <div class="result-item highlight">
+                <span class="res-label" id="resLbl1">100 KM Ortalama Tüketim</span>
+                <div class="res-value" id="resTuketim">0<span>L</span></div>
+            </div>
+            <div class="result-item">
+                <span class="res-label" id="resLbl2">KM Başı Maliyet</span>
+                <div class="res-value" id="resKmMaliyet">0<span class="currency">₺</span></div>
+            </div>
+            <div class="result-item">
+                <span class="res-label" id="resLbl3">Toplam Tutar</span>
+                <div class="res-value" id="resToplamTutar">0<span class="currency">₺</span></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // DİL SÖZLÜĞÜ
+    const translations = {
+        tr: {
+            btnBack: "Geri", title: "🚗 Akıllı Yakıt Paneli", subtitle: "Tüketim ve maliyet analizi",
+            lblPrice: "Litre Fiyatı", unitPrice: "₺ / LT", lblFuel: "Alınan Yakıt", unitLitre: "Litre",
+            lblWay: "Gidilen Yol", btnCalc: "Hesapla ve Analiz Et", resLbl1: "100 KM Ortalama Tüketim",
+            resLbl2: "KM Başı Maliyet", resLbl3: "Toplam Tutar", currency: "₺", error: "Lütfen tüm alanları doldurun."
+        },
+        en: {
+            btnBack: "Back", title: "🚗 Smart Fuel Panel", subtitle: "Consumption & cost analysis",
+            lblPrice: "Price per Liter", unitPrice: "$ / LT", lblFuel: "Fuel Amount", unitLitre: "Liters",
+            lblWay: "Distance Traveled", btnCalc: "Calculate & Analyze", resLbl1: "Avg. Consumption (100KM)",
+            resLbl2: "Cost per KM", resLbl3: "Total Amount", currency: "$", error: "Please fill in all fields."
+        },
+        ru: {
+            btnBack: "Назад", title: "🚗 Топливная панель", subtitle: "Анализ расхода и стоимости",
+            lblPrice: "Цена за литр", unitPrice: "₽ / Л", lblFuel: "Куплено топлива", unitLitre: "Литры",
+            lblWay: "Пройденный путь", btnCalc: "Рассчитать", resLbl1: "Средний расход (100 км)",
+            resLbl2: "Стоимость за км", resLbl3: "Итоговая сумма", currency: "₽", error: "Пожалуйста, заполните все поля."
+        }
+    };
+
+    // URL'DEN DİLİ ÇEK
+    const urlParams = new URLSearchParams(window.location.search);
+    let currentLang = urlParams.get('lang') || 'tr';
+
+    // SAYFAYI DİLLE GÜNCELLE
+    function applyLanguage() {
+        const t = translations[currentLang];
+        document.getElementById('btnBack').innerHTML = `<i class="fas fa-arrow-left"></i> ${t.btnBack}`;
+        document.getElementById('title').innerText = t.title;
+        document.getElementById('subtitle').innerText = t.subtitle;
+        document.getElementById('lblPrice').innerText = t.lblPrice;
+        document.getElementById('unitPrice').innerText = t.unitPrice;
+        document.getElementById('lblFuel').innerText = t.lblFuel;
+        document.getElementById('unitLitre').innerText = t.unitLitre;
+        document.getElementById('lblWay').innerText = t.lblWay;
+        document.getElementById('btnCalc').innerText = t.btnCalc;
+        document.getElementById('resLbl1').innerText = t.resLbl1;
+        document.getElementById('resLbl2').innerText = t.resLbl2;
+        document.getElementById('resLbl3').innerText = t.resLbl3;
+        
+        // Birimleri güncelle (₺ / $ / ₽)
+        const currencies = document.querySelectorAll('.currency');
+        currencies.forEach(el => el.innerText = t.currency);
+    }
+
+    function analizEt() {
+        const fiyat = parseFloat(document.getElementById('birimFiyat').value);
+        const litre = parseFloat(document.getElementById('litre').value);
+        const km = parseFloat(document.getElementById('km').value);
+        const resultsDiv = document.getElementById('results');
+        const t = translations[currentLang];
+
+        if (fiyat > 0 && litre > 0 && km > 0) {
+            const ortalamaTuketim = (litre / km) * 100;
+            const toplamTutar = litre * fiyat;
+            const kmMaliyet = toplamTutar / km;
+
+            document.getElementById('resTuketim').innerHTML = `${ortalamaTuketim.toFixed(2)}<span>L</span>`;
+            document.getElementById('resKmMaliyet').innerHTML = `${kmMaliyet.toFixed(2)}<span>${t.currency}</span>`;
+            document.getElementById('resToplamTutar').innerHTML = `${toplamTutar.toFixed(2)}<span>${t.currency}</span>`;
+
+            resultsDiv.style.display = 'block';
+        } else {
+            alert(t.error);
+        }
+    }
+
+    // Başlangıçta dili uygula
+    window.onload = applyLanguage;
+</script>
+
+</body>
+</html>

@@ -1,1053 +1,345 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Enterprise | Karşıyaka Global</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-  <style>
-    :root {
-      --sirket: #159A59;
-      --p2-blue: #159A59;
-      --p2-green: #20B86A;
-      --bg: linear-gradient(135deg, #0a3c26 0%, #159A59 100%);
-      --card-bg: rgba(255,255,255,0.08);
-      --text: #e0f2e9;
-      --title: #ffffff;
-      --soft-shadow: 0 10px 25px rgba(0,0,0,0.4);
-      --gold: #fbbf04;
-      --danger: #e74c3c;
-      --wa-green: #25D366;
-    }
-    [data-theme="dark"] {
-      --bg: linear-gradient(135deg, #051a10 0%, #0d4d32 100%);
-      --card-bg: rgba(0,0,0,0.25);
-      --text: #c8f5d9;
-      --title: #ffffff;
-      --soft-shadow: 0 10px 25px rgba(0,0,0,0.5);
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { 
-      font-family: 'Segoe UI', sans-serif; 
-      background: var(--bg); 
-      display: flex; 
-      justify-content: center; 
-      align-items: center; 
-      min-height: 100vh; 
-      color: var(--text); 
-      transition: background 0.3s ease; 
-      overflow-x: hidden;
-      position: relative; /* Konumlandırma bağlamı */
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enterprise | Karşıyaka Global</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <style>
+        :root {
+            --p2-blue: #3498db; --p2-green: #2ecc71; --bg: #f0f3f7; 
+            --card-bg: #ffffff; --text: #5d6d7e; --title: #2c3e50;
+            --soft-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            --gold: #fbbc04; --danger: #e74c3c; --wa-green: #25D366;
+        }
+        [data-theme="dark"] {
+            --bg: #121212; --card-bg: #1e1e1e; --text: #b0b0b0; --title: #ffffff;
+            --soft-shadow: 0 10px 25px rgba(0,0,0,0.4);
+        }
 
-    /* ===== PREMIUM WAVE ANIMATION (GÜNCELLEME) ===== */
-    #waveAnim {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      z-index: -1;
-      pointer-events: none; /* Tıklamaları engellemez */
-    }
-    .wave {
-      position: absolute;
-      top: -200%;
-      left: -200%;
-      width: 400%;
-      height: 400%;
-      background: radial-gradient(circle at center, rgba(21,154,89,.25) 0%, transparent 60%);
-      animation: wave 8s linear infinite;
-      will-change: transform; /* GPU hızlandırma */
-    }
-    @keyframes wave {
-      0% { transform: translate(0, 0) rotate(0deg); }
-      100% { transform: translate(-50%, -50%) rotate(360deg); }
-    }
-    .wave-layer-2 { animation-delay: -2s; opacity: 0.3; }
-    .wave-layer-3 { animation-delay: -4s; opacity: 0.2; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); display: flex; justify-content: center; align-items: center; min-height: 100vh; color: var(--text); transition: background 0.3s ease; overflow-x: hidden; }
 
-    #loadingOverlay { position: fixed; inset: 0; background: rgba(21,154,89,.15); backdrop-filter: blur(10px); z-index: 9999; display: none; flex-direction: column; justify-content: center; align-items: center; }
-    .loader-rays{display:flex;gap:10px;}
-    .ray{width:6px;height:40px;background:var(--sirket);border-radius:3px;animation:rayAnim 1s ease-in-out infinite;}
-    @keyframes rayAnim{0%,100%{transform:scaleY(0.4);opacity:.4;}50%{transform:scaleY(1);opacity:1;}}
-    .loading-text { font-weight: 700; color: var(--sirket); font-size: 14px; text-transform: uppercase; margin-top: 12px; }
+        #loadingOverlay {
+            position: fixed; inset: 0; background: rgba(255,255,255,0.85); 
+            backdrop-filter: blur(10px); z-index: 9999; display: none;
+            flex-direction: column; justify-content: center; align-items: center;
+        }
+        [data-theme="dark"] #loadingOverlay { background: rgba(18,18,18,0.9); }
+        .spinner { width: 50px; height: 50px; border: 5px solid rgba(52, 152, 219, 0.2); border-top: 5px solid var(--p2-blue); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 15px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .loading-text { font-weight: 700; color: var(--p2-blue); font-size: 14px; text-transform: uppercase; }
 
-    .container { width: 100%; max-width: 480px; padding: 20px; }
+        .container { width: 100%; max-width: 480px; padding: 20px; }
 
-    .premium-info-card, .menu-card, .review-widget, .history-card { background: var(--card-bg); border-radius: 25px; padding: 30px 25px; box-shadow: var(--soft-shadow); margin-bottom: 20px; animation: slideUp 0.6s ease-out backwards; }
-    @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        .premium-info-card, .menu-card, .review-widget {
+            background: var(--card-bg); border-radius: 25px; padding: 30px 25px;
+            box-shadow: var(--soft-shadow); margin-bottom: 20px;
+            animation: slideUp 0.6s ease-out backwards;
+        }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
 
-    .info-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; }
-    .info-label { font-weight: 700; font-size: 12px; opacity: 0.8; }
-    .info-value { font-weight: 600; font-size: 14px; color: var(--title); }
+        .info-box {
+            background: rgba(46, 204, 113, 0.04); margin-bottom: 10px;
+            padding: 14px 18px; border-radius: 16px; display: flex;
+            justify-content: space-between; align-items: center; 
+            transition: all 0.3s ease; cursor: default; user-select: none;
+        }
+        [data-theme="dark"] .info-box { background: rgba(255, 255, 255, 0.05); }
+        .info-box:hover { transform: translateY(-2px); background: rgba(46, 204, 113, 0.08); box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
 
-    /* ===== GEÇMİŞ KİRALAMALAR ===== */
-    .history-card { display: none; }
-    .history-card.active { display: block; }
-    .history-title { font-size: 18px; font-weight: 700; color: var(--title); margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
-    .history-item {
-      background: rgba(255,255,255,0.08); border-radius: 12px; padding: 12px;
-      margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;
-    }
-    .history-item-plate { font-weight: 700; color: var(--p2-green); }
-    .history-item-car { font-size: 13px; opacity: 0.8; }
-    .history-item-date { font-size: 11px; opacity: 0.7; }
+        .warning-pulse { border: 1px solid var(--danger); animation: pulseBg 2s infinite ease-in-out; }
+        .warning-pulse .value { color: var(--danger) !important; font-weight: 800; }
+        @keyframes pulseBg { 0% { background: rgba(231, 76, 60, 0.05); } 50% { background: rgba(231, 76, 60, 0.15); } 100% { background: rgba(231, 76, 60, 0.05); } }
 
-    .grid-menu { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 0 25px 25px 25px; }
-    .grid-item { position: relative; overflow: hidden; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.2); border-radius: 20px; padding: 24px 10px; text-align: center; cursor: pointer; transition: .3s; backdrop-filter: blur(10px); box-shadow: 0 8px 20px rgba(0,0,0,.08); }
-    .grid-item:hover { transform: translateY(-4px) scale(1.02); box-shadow: 0 12px 30px rgba(0,0,0,.15); background: rgba(21,154,89,.25); color: var(--sirket); }
-    .grid-item i { font-size: 34px; margin-bottom: 10px; display: block; }
-    .grid-item span { font-weight: 600; font-size: 13px; }
+        .label { font-weight: 700; font-size: 12px; opacity: 0.8; }
+        .value { font-weight: 600; font-size: 14px; color: var(--title); }
 
-    .menu-card { padding: 0; overflow: hidden; }
-    .menu-trigger { width: 100%; padding: 22px; background: transparent; border: none; display: flex; justify-content: space-between; align-items: center; cursor: pointer; color: var(--title); font-weight: 700; font-size: 16px; outline: none; }
-    .menu-content { display: grid; grid-template-rows: 0fr; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); opacity: 0; }
-    .menu-content.active { grid-template-rows: 1fr; opacity: 1; padding-bottom: 15px; }
-    .inner { overflow: hidden; }
+        .menu-card { padding: 0; overflow: hidden; }
+        .menu-trigger { width: 100%; padding: 22px; background: transparent; border: none; display: flex; justify-content: space-between; align-items: center; cursor: pointer; color: var(--title); font-weight: 700; font-size: 16px; outline: none; }
+        .menu-content { display: grid; grid-template-rows: 0fr; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); opacity: 0; }
+        .menu-content.active { grid-template-rows: 1fr; opacity: 1; padding-bottom: 15px; }
+        .inner { overflow: hidden; }
+        .menu-item { display: flex; align-items: center; gap: 12px; padding: 12px 25px; text-decoration: none; color: var(--text); font-size: 14px; font-weight: 600; transition: 0.3s; cursor: pointer; }
+        .menu-item:hover { background: rgba(52, 152, 219, 0.08); padding-left: 35px; color: var(--p2-blue); transform: scale(1.02); }
 
-    /* ===== PREMIUM LOGIN STYLES ===== */
-    .login-container {
-      position: relative;
-      z-index: 10;
-      width: 100%;
-      max-width: 420px;
-      margin: 0 auto;
-    }
+        .dmg-input { 
+            width: calc(100% - 50px); margin: 5px 25px 10px 25px; padding: 14px; border-radius: 12px; 
+            border: 1px solid rgba(0,0,0,0.05); background: var(--bg); color: var(--title);
+            font-family: inherit; font-size: 14px; outline: none; transition: 0.3s;
+        }
+        .dmg-input:focus { border-color: var(--p2-blue); }
+        .dmg-send-btn { 
+            width: calc(100% - 50px); margin: 5px 25px 15px 25px; padding: 15px; 
+            background: var(--wa-green); color: white; border: none; 
+            border-radius: 15px; font-weight: 800; cursor: pointer; display: flex; 
+            align-items: center; justify-content: center; gap: 10px; transition: 0.3s;
+        }
+        .dmg-send-btn:hover { opacity: 0.9; transform: translateY(-2px); }
 
-    .login-card {
-      background: var(--card-bg);
-      border-radius: 30px;
-      padding: 50px 35px;
-      box-shadow: var(--soft-shadow), 0 0 0 1px rgba(21,154,89,0.3);
-      position: relative;
-      overflow: hidden;
-      animation: slideUp 0.6s ease-out backwards;
-    }
+        .review-widget { text-align: left; border-radius: 16px; padding: 32px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); }
+        .widget-header { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; }
+        .google-logo { width: 48px; height: 48px; flex-shrink: 0; }
+        .business-info h2 { font-size: 20px; font-weight: 600; color: var(--title); margin-bottom: 4px; }
+        .google-text { font-size: 13px; color: var(--text); }
+        .rating-section { text-align: center; padding: 24px 0; border-bottom: 1px solid rgba(0,0,0,0.05); margin-bottom: 24px; }
+        .rating-score { font-size: 56px; font-weight: 300; color: var(--title); line-height: 1; margin-bottom: 12px; }
+        .stars-display { display: flex; justify-content: center; gap: 4px; margin-bottom: 8px; color: var(--gold); font-size: 24px; }
+        .star.half { position: relative; color: #dadce0; }
+        .star.half::before { content: '★'; position: absolute; left: 0; top: 0; width: 50%; overflow: hidden; color: var(--gold); }
+        .rating-text { font-size: 14px; color: var(--text); }
+        .review-button { width: 100%; padding: 14px; background: #4285f4; color: white; border: none; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.2s; }
+        .review-button:hover { background: #3367d6; transform: scale(1.02); }
+        .powered-by { text-align: center; margin-top: 16px; font-size: 12px; color: var(--text); display: flex; align-items: center; justify-content: center; gap: 4px; opacity: 0.7; }
 
-    .login-card::before {
-      content: '';
-      position: absolute;
-      top: -2px;
-      left: -2px;
-      right: -2px;
-      bottom: -2px;
-      background: linear-gradient(45deg, var(--sirket), var(--p2-green), var(--sirket));
-      z-index: -1;
-      border-radius: 32px;
-      animation: borderGlow 3s ease infinite;
-    }
-
-    @keyframes borderGlow {
-      0%, 100% { opacity: 0.5; filter: blur(5px); }
-      50% { opacity: 0.8; filter: blur(8px); }
-    }
-
-    .logo-wrapper {
-      text-align: center;
-      margin-bottom: 30px;
-      position: relative;
-    }
-
-    .logo-wrapper .logo-img {
-      width: 100px;
-      height: 100px;
-      animation: logoFloat 4s ease-in-out infinite;
-      box-shadow: 0 0 30px rgba(21,154,89,0.3);
-    }
-
-    @keyframes logoFloat {
-      0%, 100% { transform: translateY(0) scale(1); }
-      50% { transform: translateY(-10px) scale(1.05); }
-    }
-
-    .login-title {
-      font-size: 28px;
-      font-weight: 800;
-      background: linear-gradient(135deg, var(--title), var(--p2-green));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      margin-bottom: 30px;
-      text-align: center;
-      letter-spacing: 1px;
-    }
-
-    .input-group {
-      position: relative;
-      margin-bottom: 25px;
-    }
-
-    .input-group i {
-      position: absolute;
-      left: 18px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: var(--p2-green);
-      font-size: 16px;
-      transition: all 0.3s ease;
-      z-index: 1;
-    }
-
-    .input-field {
-      width: 100%;
-      padding: 18px 18px 18px 50px;
-      background: rgba(255,255,255,0.07);
-      border: 2px solid rgba(255,255,255,0.1);
-      border-radius: 16px;
-      font-weight: 700;
-      color: var(--title);
-      outline: none;
-      font-size: 16px;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      letter-spacing: 3px;
-      text-transform: uppercase;
-    }
-
-    .input-field:focus {
-      border-color: var(--sirket);
-      background: rgba(255,255,255,0.12);
-      box-shadow: 0 0 0 4px rgba(21,154,89,0.15);
-      transform: translateY(-2px);
-    }
-
-    .input-field:focus + i {
-      color: var(--p2-green);
-      transform: translateY(-50%) scale(1.2);
-    }
-
-    .input-field::placeholder {
-      color: rgba(224,242,233,0.6);
-      letter-spacing: 1px;
-      font-weight: 500;
-    }
-
-    .btn-primary {
-      width: 100%;
-      padding: 18px;
-      background: linear-gradient(135deg, var(--sirket), var(--p2-green));
-      color: white;
-      border: none;
-      border-radius: 16px;
-      font-weight: 800;
-      font-size: 16px;
-      cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      position: relative;
-      overflow: hidden;
-      letter-spacing: 1px;
-      margin-top: 15px;
-    }
-
-    .btn-primary:hover {
-      transform: translateY(-3px) scale(1.02);
-      box-shadow: 0 10px 25px rgba(21,154,89,0.3);
-    }
-
-    .btn-primary:active {
-      transform: translateY(0) scale(0.98);
-    }
-
-    .btn-primary::after {
-      content: '';
-      position: absolute;
-      top: -50%;
-      left: -60%;
-      width: 20px;
-      height: 200%;
-      background: rgba(255,255,255,0.3);
-      transform: rotate(25deg);
-      transition: all 0.6s;
-    }
-
-    .btn-primary:hover::after {
-      left: 120%;
-    }
-
-    .login-subtitle {
-      text-align: center;
-      font-size: 13px;
-      opacity: 0.7;
-      margin-top: 20px;
-      font-weight: 500;
-    }
-
-    .login-subtitle i {
-      color: var(--p2-green);
-    }
-
-    @keyframes shake {
-      0%, 100% { transform: translateX(0); }
-      25% { transform: translateX(-10px); }
-      75% { transform: translateX(10px); }
-    }
-
-    .shake {
-      animation: shake 0.4s ease-in-out;
-    }
-
-    @keyframes pulse {
-      0% { box-shadow: 0 0 0 0 rgba(21,154,89,0.7); }
-      70% { box-shadow: 0 0 0 15px rgba(21,154,89,0); }
-      100% { box-shadow: 0 0 0 0 rgba(21,154,89,0); }
-    }
-
-    /* ===== ROTA PLANLAYICI MODAL ===== */
-    .modal-route {
-      position: fixed; inset: 0; background: rgba(5,26,16,.75);
-      backdrop-filter: blur(12px); z-index: 3000;
-      display: none; align-items: center; justify-content: center;
-      padding: 20px;
-    }
-    .modal-route.active { display: flex; }
-    .route-box {
-      background: var(--card-bg); border-radius: 28px;
-      padding: 35px 30px 30px; max-width: 420px; width: 100%;
-      box-shadow: 0 25px 50px rgba(0,0,0,.35);
-      animation: popIn .4s cubic-bezier(.18,.89,.32,1.28);
-    }
-    .route-header {
-      display: flex; justify-content: space-between; align-items: center;
-      margin-bottom: 25px;
-    }
-    .route-title {
-      font-size: 22px; font-weight: 700; color: var(--title);
-    }
-    .route-close {
-      background: none; border: none; font-size: 24px;
-      color: var(--text); cursor: pointer; transition: .2s;
-    }
-    .route-close:hover { color: var(--danger); transform: rotate(90deg); }
-    .route-body {
-      display: flex; flex-direction: column; gap: 18px;
-    }
-    .route-input {
-      background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.15);
-      border-radius: 14px; padding: 14px 16px; color: var(--title);
-      font-family: inherit; font-size: 14px; outline: none;
-      transition: border .3s, background .3s;
-    }
-    .route-input:focus { border-color: var(--sirket); background: rgba(255,255,255,.1); }
-    .route-select {
-      background: rgba(255,255,255,.07) !important;
-      border: 1px solid rgba(255,255,255,.15);
-      border-radius: 14px; padding: 14px 16px; color: var(--title);
-      font-family: inherit; font-size: 14px; outline: none;
-      transition: border .3s, background .3s;
-      -webkit-appearance: none !important;
-      -moz-appearance: none !important;
-      appearance: none !important;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23e0f2e9' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592c.86 0 1.319 1.013.753 1.658l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
-      background-repeat: no-repeat; background-position: right 14px top 50%; padding-right: 40px;
-    }
-    .route-select option {
-      background: #0a3c26 !important;
-      color: #e0f2e9 !important;
-      padding: 10px 12px;
-      font-size: 14px;
-    }
-    .route-btn {
-      padding: 14px; border: none; border-radius: 14px;
-      background: var(--sirket); color: white; font-weight: 700;
-      cursor: pointer; transition: .3s;
-    }
-    .route-btn:hover { opacity: .9; transform: translateY(-2px); }
-    .route-result {
-      margin-top: 15px; padding: 15px; background: rgba(21,154,89,.15);
-      border-radius: 12px; font-weight: 600; display: none;
-    }
-    .route-result.show { display: block; }
-
-    .modal-damage {
-      position: fixed; inset: 0; background: rgba(5,26,16,.75);
-      backdrop-filter: blur(12px); z-index: 3000;
-      display: none; align-items: center; justify-content: center;
-      padding: 20px;
-    }
-    .modal-damage.active { display: flex; }
-    .damage-box {
-      background: var(--card-bg); border-radius: 28px;
-      padding: 35px 30px 30px; max-width: 420px; width: 100%;
-      box-shadow: 0 25px 50px rgba(0,0,0,.35);
-      animation: popIn .4s cubic-bezier(.18,.89,.32,1.28);
-      position: relative;
-    }
-    @keyframes popIn {
-      from { opacity: 0; transform: scale(.85) translateY(20px); }
-      to { opacity: 1; transform: scale(1) translateY(0); }
-    }
-    .damage-header {
-      display: flex; justify-content: space-between; align-items: center;
-      margin-bottom: 25px;
-    }
-    .damage-title {
-      font-size: 22px; font-weight: 700; color: var(--title);
-    }
-    .damage-close {
-      background: none; border: none; font-size: 24px;
-      color: var(--text); cursor: pointer; transition: .2s;
-    }
-    .damage-close:hover { color: var(--danger); transform: rotate(90deg); }
-    .damage-body {
-      display: flex; flex-direction: column; gap: 18px;
-    }
-    .damage-label {
-      font-size: 13px; font-weight: 600; opacity: .8;
-    }
-    .damage-select, .damage-textarea {
-      background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.15);
-      border-radius: 14px; padding: 14px 16px; color: var(--title);
-      font-family: inherit; font-size: 14px; outline: none;
-      transition: border .3s, background .3s;
-      appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23e0f2e9' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592c.86 0 1.319 1.013.753 1.658l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
-      background-repeat: no-repeat; background-position: right 14px top 50%; padding-right: 40px;
-    }
-    .damage-select:focus, .damage-textarea:focus { border-color: var(--sirket); background: rgba(255,255,255,.1); }
-    .damage-textarea { resize: vertical; min-height: 90px; }
-    .damage-select option {
-      background: #0a3c26;
-      color: #e0f2e9;
-      padding: 10px 12px;
-      font-size: 14px;
-    }
-    .damage-select option:checked {
-      background: var(--sirket);
-      color: #ffffff;
-    }
-    .damage-actions {
-      display: flex; gap: 12px; margin-top: 8px;
-    }
-    .damage-btn {
-      flex: 1; padding: 14px; border: none; border-radius: 14px;
-      font-weight: 700; font-size: 15px; cursor: pointer;
-      transition: .3s;
-    }
-    .damage-send { background: var(--wa-green); color: white; }
-    .damage-send:hover { opacity: .9; transform: translateY(-2px); }
-    .damage-cancel { background: rgba(255,255,255,.1); color: var(--text); }
-    .damage-cancel:hover { background: rgba(255,255,255,.2); }
-
-    .top-nav { position: fixed; top: 20px; right: 20px; display: flex; gap: 10px; z-index: 1000; }
-    .nav-btn { background: var(--card-bg); border: none; height: 42px; border-radius: 21px; padding: 0 15px; font-weight: 700; color: var(--sirket); box-shadow: var(--soft-shadow); cursor: pointer; display: flex; align-items: center; gap: 8px; }
-    .lang-dropdown { position: absolute; top: 48px; right: 0; background: var(--card-bg); border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); padding: 8px 0; min-width: 150px; display: none; }
-    .lang-dropdown.active { display: block; }
-    .lang-item { padding: 10px 15px; cursor: pointer; display: flex; align-items: center; gap: 10px; font-size: 14px; }
-    .logo-img { width: 85px; height: 85px; border-radius: 50%; margin-bottom: 15px; border: 4px solid var(--card-bg); box-shadow: var(--soft-shadow); }
-    .modal { position: fixed; inset: 0; background: rgba(5,26,16,0.95); display: none; justify-content: center; align-items: center; z-index: 2000; padding: 20px; backdrop-filter: blur(8px); }
-    .modal.active { display: flex; }
-    .modal img { max-width: 100%; max-height: 85vh; border-radius: 15px; }
-
-    /* ===== MINİ HAVA DURUMU (top-nav içi) ===== */
-    .weather-chip{
-      display:flex;
-      align-items:center;
-      gap:6px;
-      background:rgba(255,255,255,.12);
-      padding:6px 10px;
-      border-radius:16px;
-      font-size:13px;
-      font-weight:600;
-      color:var(--title);
-      cursor:pointer;
-      transition:background .3s;
-    }
-    .weather-chip:hover{background:rgba(255,255,255,.2);}
-    .weather-chip i{font-size:16px;}
-    .weather-chip.loading{
-      background:rgba(255,255,255,.05);
-      opacity:.7;
-    }
-  </style>
-
-  <!-- Oturum kurtarma -->
-  <script>
-    (function(){
-      const raw = localStorage.getItem('ent_user_v4');
-      if(raw){
-        try{
-          window.addEventListener('DOMContentLoaded', () => showPanel());
-        }catch(e){}
-      }
-    })();
-  </script>
+        .top-nav { position: fixed; top: 20px; right: 20px; display: flex; gap: 10px; z-index: 1000; }
+        .nav-btn { background: var(--card-bg); border: none; height: 42px; border-radius: 21px; padding: 0 15px; font-weight: 700; color: var(--p2-blue); box-shadow: var(--soft-shadow); cursor: pointer; display: flex; align-items: center; gap: 8px; }
+        .lang-dropdown { position: absolute; top: 48px; right: 0; background: var(--card-bg); border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); padding: 8px 0; min-width: 150px; display: none; }
+        .lang-dropdown.active { display: block; }
+        .lang-item { padding: 10px 15px; cursor: pointer; display: flex; align-items: center; gap: 10px; font-size: 14px; }
+        .logo-img { width: 85px; height: 85px; border-radius: 50%; margin-bottom: 15px; border: 4px solid var(--card-bg); box-shadow: var(--soft-shadow); }
+        .input-field { width: 100%; padding: 16px; margin: 15px 0; border: none; background: var(--bg); border-radius: 15px; text-align:center; font-weight:700; color:var(--title); outline:none; letter-spacing: 2px; }
+        .btn-primary { width: 100%; padding: 16px; background: var(--p2-blue); color: white; border: none; border-radius: 15px; font-weight: 800; cursor: pointer; }
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.9); display: none; justify-content: center; align-items: center; z-index: 2000; padding: 20px; backdrop-filter: blur(8px); }
+        .modal.active { display: flex; }
+        .modal img { max-width: 100%; max-height: 85vh; border-radius: 15px; }
+      
+    </style>
 </head>
 <body>
 
-<div id="waveAnim">
-  <div class="wave"></div>
-  <div class="wave wave-layer-2"></div>
-  <div class="wave wave-layer-3"></div>
-</div>
-<div id="loadingOverlay">
-  <div class="loader-rays" id="loaderRays"><div class="ray"></div><div class="ray"></div><div class="ray"></div><div class="ray"></div><div class="ray"></div></div>
-  <div class="loading-text" id="loadText">Lütfen Bekleyin...</div>
-</div>
-<div class="modal" id="imageModal" onclick="closeModal()"><img id="modalImg" src=""></div>
+    <div id="loadingOverlay"><div class="spinner"></div><div class="loading-text" id="loadText">Lütfen Bekleyin...</div></div>
+    <div class="modal" id="imageModal" onclick="closeModal()"><img id="modalImg" src=""></div>
 
-<div class="top-nav">
-  <button class="nav-btn" onclick="toggleLang(event)">
-    <img id="currentFlag" src="https://flagicons.lipis.dev/flags/4x3/tr.svg" width="20">
-    <span id="currentLangText">TR</span>
-    <div class="lang-dropdown" id="langBox">
-      <div class="lang-item" onclick="changeLang('tr')"><img src="https://flagicons.lipis.dev/flags/4x3/tr.svg" width="20"> Türkçe</div>
-      <div class="lang-item" onclick="changeLang('en')"><img src="https://flagicons.lipis.dev/flags/4x3/gb.svg" width="20"> English</div>
-      <div class="lang-item" onclick="changeLang('ru')"><img src="https://flagicons.lipis.dev/flags/4x3/ru.svg" width="20"> Русский</div>
-    </div>
-  </button>
-  <button class="nav-btn" id="themeBtn"><i class="fas fa-moon"></i></button>
-  <!-- ===== MINİ HAVA DURUMU ===== -->
-  <div class="weather-chip" id="miniWeather" onclick="requestLocationPermission()">
-    <i class="fas fa-cloud-sun"></i>
-    <span id="miniTemp">--°</span>
-  </div>
-</div>
-
-<div class="container">
-  <!-- ===== PREMIUM LOGIN PAGE ===== -->
-  <div id="loginPage">
-    <div class="login-container">
-      <div class="login-card">
-        <div class="logo-wrapper">
-          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSH3jsyOk5VVgUIWBUpkW5RTrXZMYNxogcuBQ&s" class="logo-img">
+    <div class="top-nav">
+        <div class="nav-btn" onclick="toggleLang(event)">
+            <img id="currentFlag" src="https://flagicons.lipis.dev/flags/4x3/tr.svg" width="20">
+            <span id="currentLangText">TR</span>
+            <div class="lang-dropdown" id="langBox">
+                <div class="lang-item" onclick="changeLang('tr')"><img src="https://flagicons.lipis.dev/flags/4x3/tr.svg" width="20"> Türkçe</div>
+                <div class="lang-item" onclick="changeLang('en')"><img src="https://flagicons.lipis.dev/flags/4x3/gb.svg" width="20"> English</div>
+                <div class="lang-item" onclick="changeLang('ru')"><img src="https://flagicons.lipis.dev/flags/4x3/ru.svg" width="20"> Русский</div>
+            </div>
         </div>
-        <h2 class="login-title" id="txtLoginTitle">Hoş Geldiniz</h2>
+        <button class="nav-btn" id="themeBtn"><i class="fas fa-moon"></i></button>
+    </div>
 
-        <div class="input-group">
-          <i class="fas fa-key"></i>
-          <input type="text" id="codeInput" class="input-field" placeholder="GİRİŞ KODU" maxlength="5">
+    <div class="container">
+        <div id="loginPage">
+            <div style="text-align:center;"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSH3jsyOk5VVgUIWBUpkW5RTrXZMYNxogcuBQ&s" class="logo-img"></div>
+            <div style="background:var(--card-bg); padding:40px; border-radius:30px; box-shadow:var(--soft-shadow); text-align:center;">
+                <h2 id="txtLoginTitle">Hoş Geldiniz</h2>
+                <input type="text" id="codeInput" class="input-field" placeholder="GİRİŞ KODU" maxlength="5">
+                <button class="btn-primary" id="txtLoginBtn" onclick="login()">GİRİŞ YAP</button>
+            </div>
         </div>
 
-        <button class="btn-primary" id="txtLoginBtn" onclick="login()">
-          <i class="fas fa-arrow-right" style="margin-right: 8px;"></i>
-          <span id="btnText">GİRİŞ YAP</span>
-        </button>
+        <div id="panelPage" style="display:none;">
+            <div style="text-align:center;"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSH3jsyOk5VVgUIWBUpkW5RTrXZMYNxogcuBQ&s" class="logo-img"></div>
+            
+            <div class="premium-info-card">
+                <span id="txtRentalInfo" style="display:block; text-align:center; color:var(--p2-green); font-weight:800; margin-bottom:20px; text-transform:uppercase;">Kiralama Bilgileri</span>
+                <div class="info-box"><span class="label" id="lbl1">Müşteri</span><span class="value" id="vName">-</span></div>
+                <div class="info-box"><span class="label" id="lbl2">Plaka</span><span class="value" id="vPlate">-</span></div>
+                <div class="info-box"><span class="label" id="lbl3">Araç</span><span class="value" id="vCar">-</span></div>
+                <div id="dateBox" class="info-box"><span class="label" id="lbl4">İade Tarihi</span><span class="value" id="vDate">-</span></div>
+                <div class="info-box"><span class="label" id="lbl5">Ofis</span><span class="value" id="vOffice">-</span></div>
+            </div>
 
-        <div class="login-subtitle">
-          <i class="fas fa-lock"></i> Güvenli Giriş Sistemi
+            <div class="menu-card">
+                <button class="menu-trigger" onclick="toggleAcc('menuArea', 'arrow')">
+                    <span id="txtMenuTitle">Müşteri Paneli</span>
+                    <i class="fas fa-chevron-down" id="arrow" style="transition:0.3s"></i>
+                </button>
+                <div class="menu-content" id="menuArea">
+                    <div class="inner">
+                        <a href="javascript:void(0)" class="menu-item" onclick="openImg('policy.jpg')"><i class="fas fa-file-contract"></i><span id="opt1">Kaza Tutanak Örneği</span></a>
+                        <a href="javascript:void(0)" class="menu-item" onclick="openImg('brosur.jpg')"><i class="fas fa-file-invoice"></i><span id="opt2">E-Broşür</span></a>
+                        <a href="javascript:void(0)" class="menu-item" onclick="goPage('sigorta.html')"><i class="fas fa-shield-alt"></i><span id="opt3">Sigorta Paketleri</span></a>
+                        <a href="javascript:void(0)" class="menu-item" onclick="goPage('rehber.html')"><i class="fas fa-map-location-dot"></i><span id="optGuide">İzmir Rehberi</span></a>
+                        <a href="javascript:void(0)" class="menu-item" onclick="openImg('esarj.jpg')"><i class="fas fa-charging-station"></i><span id="opt4">Elektrikli Araç Kılavuzu</span></a>
+                        <a href="javascript:void(0)" class="menu-item" onclick="goPage('yakit.html')"><i class="fas fa-gas-pump"></i><span id="optYakit">Yakıt Hesaplama</span></a>
+                        <a href="javascript:void(0)" class="menu-item" onclick="goPage('katalog.html')"><i class="fas fa-car"></i><span id="opt5">Araçlar</span></a>
+                        <a href="tel:05348901032" class="menu-item"><i class="fas fa-phone"></i><span id="opt6">Ofis İrtibat</span></a>
+                        <a href="tel:4444937" class="menu-item"><i class="fas fa-ambulance"></i><span id="opt7">Yol Yardım</span></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="menu-card" style="border: 1px solid rgba(231, 76, 60, 0.2);">
+                <button class="menu-trigger" onclick="toggleAcc('damageArea', 'arrowDmg')" style="color:var(--danger)">
+                    <span id="txtDmgTitle">Hasar Bildirimi</span>
+                    <i class="fas fa-chevron-down" id="arrowDmg" style="transition:0.3s"></i>
+                </button>
+                <div class="menu-content" id="damageArea">
+                    <div class="inner">
+                        <input type="text" id="dmgAreaInput" class="dmg-input" placeholder="Hasar Bölgesi">
+                        <textarea id="dmgDescInput" class="dmg-input" rows="2" placeholder="Nasıl Oluştu?"></textarea>
+                        <button class="dmg-send-btn" onclick="sendDamage()">
+                            <i class="fab fa-whatsapp"></i> <span id="btnDmgSend">BİLDİRİMİ GÖNDER</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="review-widget">
+                <div class="widget-header">
+                    <svg class="google-logo" viewBox="0 0 48 48">
+                        <path d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z" fill="#FFC107"/>
+                        <path d="M6.306 14.691l6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 16.318 4 9.656 8.337 6.306 14.691z" fill="#FF3D00"/>
+                        <path d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238A11.91 11.91 0 0124 36c-5.202 0-9.619-3.317-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44z" fill="#4CAF50"/>
+                        <path d="M43.611 20.083H42V20H24v8h11.303a12.04 12.04 0 01-4.087 5.571l.003-.002 6.19 5.238C36.971 39.205 44 34 44 24c0-1.341-.138-2.65-.389-3.917z" fill="#1976D2"/>
+                    </svg>
+                    <div class="business-info">
+                        <h2>Enterprise Karşıyaka</h2>
+                        <div class="google-text" id="txtGoogleTitle">Google Yorumları</div>
+                    </div>
+                </div>
+                <div class="rating-section">
+                    <div class="rating-score">4.6</div>
+                    <div class="stars-display"><span>★</span><span>★</span><span>★</span><span>★</span><span class="star half">★</span></div>
+                    <div class="rating-text" id="txtPlatform">5 üzerinden 4.6 puan</div>
+                </div>
+                <button class="review-button" onclick="window.open('https://share.google/5t4PqpqStSOkwrUte', '_blank')">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"/></svg>
+                    <span id="txtGoogleBtn">Yorum Yap</span>
+                </button>
+            </div>
+
+            <p onclick="logout()" id="txtLogout" style="text-align:center; color:#e74c3c; margin-top:20px; cursor:pointer; font-weight:700; text-decoration:underline; padding-bottom: 30px;">Çıkış Yap</p>
         </div>
-      </div>
-    </div>
-  </div>
-
-  <div id="panelPage" style="display:none;">
-    <div style="text-align:center;"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSH3jsyOk5VVgUIWBUpkW5RTrXZMYNxogcuBQ&s" class="logo-img"></div>
-
-    <div class="premium-info-card">
-      <span id="txtRentalInfo" style="display:block; text-align:center; color:var(--p2-green); font-weight:800; margin-bottom:20px; text-transform:uppercase;">Kiralama Bilgileri</span>
-      <div class="info-row"><span class="info-label" id="lbl1">Müşteri</span><span class="info-value" id="vName">-</span></div>
-      <div class="info-row"><span class="info-label" id="lbl2">Plaka</span><span class="info-value" id="vPlate">-</span></div>
-      <div class="info-row"><span class="info-label" id="lbl3">Araç</span><span class="info-value" id="vCar">-</span></div>
-      <div id="dateBox" class="info-row"><span class="info-label" id="lbl4">İade Tarihi</span><span class="info-value" id="vDate">-</span></div>
-      <div class="info-row"><span class="info-label" id="lbl5">Ofis</span><span class="info-value" id="vOffice">-</span></div>
     </div>
 
-    <!-- ===== GEÇMİŞ KİRALAMALAR ===== -->
-    <div class="history-card" id="historyCard">
-      <div class="history-title" id="historyTitle"><i class="fas fa-history"></i> Geçmiş Kiralamalar</div>
-      <div id="historyList"></div>
-    </div>
+    <script>
+        // --- YENİ DAĞITIM URL'Sİ ---
+        const API_URL = 'https://script.google.com/macros/s/AKfycbxMW7mmtFYjypmOoAPl0_Z0ZqhQ11rW9r-886OtdW5k8XLpvjIlu90L9qDVg--7s9UD/exec';
 
-    <div class="menu-card">
-      <button class="menu-trigger" onclick="toggleAcc('gridArea', 'arrowGrid')">
-        <span id="txtMenuTitle">Müşteri Paneli</span>
-        <i class="fas fa-chevron-down" id="arrowGrid" style="transition:.3s"></i>
-      </button>
-      <div class="menu-content" id="gridArea" style="display:none;">
-        <div class="grid-menu">
-          <div class="grid-item" onclick="goPage('katalog.html')"><i class="fas fa-car"></i><span id="opt5">Araçlar</span></div>
-          <div class="grid-item" onclick="openImg('policy.jpg')"><i class="fas fa-file-contract"></i><span id="opt1">Kaza Tutanak</span></div>
-          <div class="grid-item" onclick="openImg('brosur.jpg')"><i class="fas fa-file-invoice"></i><span id="opt2">E-Broşür</span></div>
-          <div class="grid-item" onclick="goPage('sigorta.html')"><i class="fas fa-shield-alt"></i><span id="opt3">Sigorta</span></div>
-          <div class="grid-item" onclick="goPage('rehber.html')"><i class="fas fa-map-location-dot"></i><span id="optGuide">İzmir Rehberi</span></div>
-          <div class="grid-item" onclick="openImg('esarj.jpg')"><i class="fas fa-charging-station"></i><span id="opt4">EV Kılavuz</span></div>
-          <div class="grid-item" onclick="openRoutePlanner()"><i class="fas fa-route"></i><span id="optRoute">Rota Planla</span></div>
-          <div class="grid-item" onclick="goPage('yakit.html')"><i class="fas fa-gas-pump"></i><span id="optYakit">Yakıt Hesapla</span></div>
-          <div class="grid-item" onclick="window.open('tel:05348901032','_self')"><i class="fas fa-phone"></i><span id="opt6">Ofis İrtibat</span></div>
-          <div class="grid-item" onclick="window.open('tel:4444937','_self')"><i class="fas fa-ambulance"></i><span id="opt7">Yol Yardım</span></div>
-          <div class="grid-item" onclick="openDamageModal()"><i class="fas fa-exclamation-triangle" style="color:var(--danger)"></i><span id="optDamage">Hasar Bildir</span></div>
-          <!-- ⛽ YAKIT FİŞİ KONTROL BUTONU KALDIRILDI -->
-        </div>
-      </div>
-    </div>
+        const dict = {
+            tr: { flag: "tr", load: "Yükleniyor...", txtLoginTitle: "Hoş Geldiniz", txtLoginBtn: "GİRİŞ YAP", txtRentalInfo: "Kiralama Bilgileri", lbl1: "Müşteri", lbl2: "Plaka", lbl3: "Araç", lbl4: "İade Tarihi", lbl5: "Ofis", txtMenuTitle: "Müşteri Paneli", txtDmgTitle: "Hasar Bildirimi", btnDmgSend: "BİLDİRİMİ GÖNDER", opt1: "Kaza Tutanak Örneği", opt2: "E-Broşür", opt3: "Sigorta Paketleri", optGuide: "İzmir Rehberi", opt4: "Elektrikli Araç Kılavuzu", optYakit: "Yakıt Hesaplama", opt5: "Araçlar", opt6: "Ofis İrtibat", opt7: "Yol Yardım", txtLogout: "Çıkış Yap", txtGoogleTitle: "Google Yorumları", txtPlatform: "5 üzerinden 4.6 puan", txtGoogleBtn: "Yorum Yap", dmgArea: "Hasar Bölgesi (Örn: Sağ Kapı)", dmgDesc: "Hasar Nasıl Oluştu?", alertFill: "Lütfen tüm alanları doldurun.", alertCode: "Aktif Kiralama Bulunmamakta!", placeholder: "KİMLİK İLK 5 HANE" },
+            en: { flag: "gb", load: "Loading...", txtLoginTitle: "Welcome", txtLoginBtn: "LOGIN", txtRentalInfo: "Rental Details", lbl1: "Customer", lbl2: "Plate", lbl3: "Vehicle", lbl4: "Return Date", lbl5: "Office", txtMenuTitle: "Customer Portal", txtDmgTitle: "Damage Report", btnDmgSend: "SEND REPORT", opt1: "Accident Report", opt2: "E-Brochure", opt3: "Insurance", optGuide: "Izmir Guide", opt4: "EV Guide", optYakit: "Fuel Calc", opt5: "Vehicles", opt6: "Contact", opt7: "Roadside", txtLogout: "Logout", txtGoogleTitle: "Google Reviews", txtPlatform: "4.6 out of 5 stars", txtGoogleBtn: "Leave a Review", dmgArea: "Damage Area", dmgDesc: "How did it happen?", alertFill: "Please fill in all fields.", alertCode: "Invalid entry code!", placeholder: "PASSPORT NO FIRST 5 DIGITS" },
+            ru: { flag: "ru", load: "Загрузка...", txtLoginTitle: "Добро пожаловать", txtLoginBtn: "ВХОD", txtRentalInfo: "ИНФОРМАЦИЯ", lbl1: "Клиент", lbl2: "Номер", lbl3: "Авто", lbl4: "Дата возврата", lbl5: "Офис", txtMenuTitle: "Меню клиента", txtDmgTitle: "Сообщить об ущербе", btnDmgSend: "ОТПРАВИТЬ", opt1: "Отчет", opt2: "Брошюра", opt3: "Страховка", optGuide: "Путеводитель", opt4: "EV гид", optYakit: "Топливо", opt5: "Автомобили", opt6: "Контакт", opt7: "Помощь", txtLogout: "Выйти", txtGoogleTitle: "Google Отзывы", txtPlatform: "4.6 из 5 звезд", txtGoogleBtn: "Написать отзыв", dmgArea: "Область повреждения", dmgDesc: "Как это произошло?", alertFill: "Пожалуйста, заполните все поля.", alertCode: "Неверный код доступа!", placeholder: "Первые 5 цифр паспорта" }
+        };
 
-    <div class="review-widget" style="background:var(--card-bg); border-radius:16px; padding:24px; box-shadow:var(--soft-shadow);">
-      <div class="widget-header" style="display:flex; align-items:center; gap:12px; margin-bottom:16px;">
-        <svg class="google-logo" viewBox="0 0 48 48" style="width:40px; height:40px;"><path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"/><path fill="#FF3D00" d="M6.306 14.691l6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 16.318 4 9.656 8.337 6.306 14.691z"/><path fill="#4CAF50" d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238A11.91 11.91 0 0124 36c-5.202 0-9.619-3.317-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44z"/><path fill="#1976D2" d="M43.611 20.083H42V20H24v8h11.303a12.04 12.04 0 01-4.087 5.571l.003-.002 6.19 5.238C36.971 39.205 44 34 44 24c0-1.341-.138-2.65-.389-3.917z"/></svg>
-        <div>
-          <h2 style="font-size:18px; color:var(--title); margin:0;">Enterprise Karşıyaka</h2>
-          <div style="font-size:12px; color:var(--text);">Google Yorumları</div>
-        </div>
-      </div>
-      <div class="rating-section" style="text-align:center; padding:16px 0; border-bottom:1px solid rgba(0,0,0,.05); margin-bottom:16px;">
-        <div class="rating-score" style="font-size:48px; font-weight:300; color:var(--title);">4.6</div>
-        <div class="stars-display" style="display:flex; justify-content:center; gap:4px; color:var(--gold); font-size:22px; margin-bottom:6px;">
-          <span>★</span><span>★</span><span>★</span><span>★</span><span class="star half">★</span>
-        </div>
-        <div style="font-size:13px; color:var(--text);">5 üzerinden 4.6 puan</div>
-      </div>
-      <a href="https://share.google/q2EGN9lgNh5OrT3cT" target="_blank" style="text-decoration:none;">
-        <button class="review-button" style="width:100%; padding:12px; background:#159A59; color:white; border:none; border-radius:8px; font-weight:600; cursor:pointer;">
-          <i class="fas fa-external-link-alt"></i> Google Yorumu Bırak
-        </button>
-      </a>
-      <div class="powered-by" style="text-align:center; margin-top:12px; font-size:11px; color:var(--text); opacity:.7;">Powered by <i class="fab fa-google"></i> Google</div>
-    </div>
+        let currentLang = localStorage.getItem('ent_lang') || 'tr';
 
-    <div class="modal-damage" id="damageModal" onclick="closeDamageModal(event)">
-      <div class="damage-box" onclick="event.stopPropagation()">
-        <div class="damage-header">
-          <div class="damage-title" id="dmgTitle">Hasar Bildirimi</div>
-          <button class="damage-close" onclick="closeDamageModal()"><i class="fas fa-times"></i></button>
-        </div>
-        <div class="damage-body">
-          <label class="damage-label" id="dmgLabelArea">Hasar Bölgesi</label>
-          <select id="dmgPart" class="damage-select"><option value="" id="dmgSelDef">Seçiniz</option></select>
-          <label class="damage-label" id="dmgLabelDesc">Açıklama</label>
-          <textarea id="dmgDescModal" class="damage-textarea" placeholder="Olayı kısaca anlatın..."></textarea>
-          <div class="damage-actions">
-            <button class="damage-btn damage-cancel" id="dmgBtnCancel">İptal</button>
-            <button class="damage-btn damage-send" onclick="sendDamageFromModal()">
-              <i class="fab fa-whatsapp"></i> <span id="dmgBtnSend">WhatsApp ile Gönder</span>
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <p onclick="logout()" id="txtLogout" style="text-align:center; color:#e74c3c; margin-top:20px; cursor:pointer; font-weight:700; text-decoration:underline; padding-bottom: 30px;">Çıkış Yap</p>
-  </div>
-</div>
-
-<!-- ===== ROTA PLANLAYICI MODAL ===== -->
-<div class="modal-route" id="routeModal" onclick="closeRouteModal(event)">
-  <div class="route-box" onclick="event.stopPropagation()">
-    <div class="route-header">
-      <div class="route-title" id="routeTitle">Rota Planlayıcı</div>
-      <button class="route-close" onclick="closeRouteModal()"><i class="fas fa-times"></i></button>
-    </div>
-    <div class="route-body">
-      <input type="text" id="routeStart" class="route-input" placeholder="Başlangıç (örn: Bornova, İzmir)">
-      <input type="text" id="routeEnd" class="route-input" placeholder="Varış (örn: Çeşme, İzmir)">
-      <select id="fuelType" class="route-select">
-        <option value="benzin">Benzin</option>
-        <option value="dizel">Dizel</option>
-      </select>
-      <button class="route-btn" onclick="calculateRoute()">Hesapla</button>
-      <div class="route-result" id="routeResult"></div>
-    </div>
-  </div>
-</div>
-
-<script>
-  /* ---------- DİL SÖZLÜĞÜ ---------- */
-  const dict={
-    tr:{
-      flag:"tr",load:"Yükleniyor...",
-      txtLoginTitle:"Hoş Geldiniz",txtLoginBtn:"GİRİŞ YAP",placeholder:"TC İLK 5 HANE",
-      txtRentalInfo:"Kiralama Bilgileri",lbl1:"Müşteri",lbl2:"Plaka",lbl3:"Araç",lbl4:"İade Tarihi",lbl5:"Ofis",
-      txtMenuTitle:"Müşteri Paneli",
-      opt1:"Kaza Tutanak",opt2:"E-Broşür",opt3:"Sigorta",optGuide:"İzmir Rehberi",opt4:"EV Kılavuz",optYakit:"Yakıt Hesapla",opt5:"Araçlar",opt6:"Ofis İrtibat",opt7:"Yol Yardım",optDamage:"Hasar Bildir",optRoute:"Rota Planla",
-      txtGoogleTitle:"Google Yorumları",txtPlatform:"5 üzerinden 4.6 puan",txtGoogleBtn:"Google yorumu bırak",txtHistoryTitle:"Geçmiş Kiralamalar",routeTitle:"Rota Planlayıcı",
-      alertFill:"Lütfen tüm alanları doldurun.",alertCode:"Aktif Kiralama Bulunmamakta!",
-      dmgTitle:"Hasar Bildirimi",dmgLabelArea:"Hasar Bölgesi",dmgSelDef:"Seçiniz",
-      dmgLabelDesc:"Açıklama",dmgBtnCancel:"İptal",dmgBtnSend:"WhatsApp ile Gönder",
-      dmgOptions:["Ön Tampon","Arka Tampon","Sol Ön Kapı","Sol Arka Kapı","Sağ Ön Kapı","Sağ Arka Kapı","Ön Kaput","Arka Bagaj","Döşeme / İç"]
-    },
-    en:{
-      flag:"gb",load:"Loading...",
-      txtLoginTitle:"Welcome",txtLoginBtn:"LOGIN",placeholder:"Fırst 5 Dıgıts ID",
-      txtRentalInfo:"Rental Details",lbl1:"Customer",lbl2:"Plate",lbl3:"Vehicle",lbl4:"Return Date",lbl5:"Office",
-      txtMenuTitle:"Customer Portal",
-      opt1:"Accident Report",opt2:"E-Brochure",opt3:"Insurance",optGuide:"Izmir Guide",opt4:"EV Guide",optYakit:"Fuel Calc",opt5:"Vehicles",opt6:"Contact",opt7:"Roadside",optDamage:"Report Damage",optRoute:"Route Planner",
-      txtGoogleTitle:"Google Reviews",txtPlatform:"4.6 out of 5 stars",txtGoogleBtn:"Leave a Review",txtHistoryTitle:"Rental History",routeTitle:"Route Planner",
-      alertFill:"Please fill in all fields.",alertCode:"Invalid entry code!",
-      dmgTitle:"Damage Report",dmgLabelArea:"Damage Area",dmgSelDef:"Select",
-      dmgLabelDesc:"Description",dmgBtnCancel:"Cancel",dmgBtnSend:"Send via WhatsApp",
-      dmgOptions:["Front Bumper","Rear Bumper","Left Front Door","Left Rear Door","Right Front Door","Right Rear Door","Front Hood","Rear Trunk","Interior"]
-    },
-    ru:{
-      flag:"ru",load:"Загрузка...",
-      txtLoginTitle:"Добро пожаловать",txtLoginBtn:"ВХОД",placeholder:"Первые 5 цифр ID",
-      txtRentalInfo:"ИНФОРМАЦИЯ",lbl1:"Клиент",lbl2:"Номер",lbl3:"Авто",lbl4:"Дата возврата",lbl5:"Офис",
-      txtMenuTitle:"Меню клиента",
-      opt1:"Отчет",opt2:"Брошюра",opt3:"Страховка",optGuide:"Путеводитель",opt4:"EV гид",optYakit:"Топливо",opt5:"Автомобили",opt6:"Контакт",opt7:"Помощь",optDamage:"Сообщить об ущербе",optRoute:"Планировщик",
-      txtGoogleTitle:"Google Отзывы",txtPlatform:"4.6 из 5 звезд",txtGoogleBtn:"Написать отзыв",txtHistoryTitle:"Rental History",routeTitle:"Route Planner",
-      alertFill:"Пожалуйста, заполните все поля.",alertCode:"Неверный код доступа!",
-      dmgTitle:"Сообщить об ущербе",dmgLabelArea:"Район повреждения",dmgSelDef:"Выбрать",
-      dmgLabelDesc:"Описание",dmgBtnCancel:"Отмена",dmgBtnSend:"Отправить в WhatsApp",
-      dmgOptions:["Передний бампер","Задний бампер","Левая передняя дверь","Левая задняя дверь","Правая передняя дверь","Правая задняя дверь","Передний капот","Задний багажник","Салон"]
-    }
-  };
-  let currentLang=localStorage.getItem('ent_lang')||'tr';
-
-  function showLoading(text=dict[currentLang].load){
-    document.getElementById('loadText').textContent=text;
-    document.getElementById('loadingOverlay').style.display='flex';
-    document.getElementById('loaderRays').style.display='flex';
-  }
-  function hideLoading(){document.getElementById('loadingOverlay').style.display='none';}
-
-  async function login(){
-    const input=document.getElementById('codeInput').value.trim().toUpperCase();
-    const loginCard = document.querySelector('.login-card');
-    const codeInput = document.getElementById('codeInput');
-    
-    if(input.length<3){
-      loginCard.classList.add('shake');
-      codeInput.style.borderColor = 'var(--danger)';
-      setTimeout(() => {
-        loginCard.classList.remove('shake');
-        codeInput.style.borderColor = 'rgba(255,255,255,0.1)';
-      }, 400);
-      return;
-    }
-    
-    showLoading();
-    try{
-      const res=await fetch(`https://script.google.com/macros/s/AKfycbxMW7mmtFYjypmOoAPl0_Z0ZqhQ11rW9r-886OtdW5k8XLpvjIlu90L9qDVg--7s9UD/exec?kod=${input}`);
-      const result=await res.json();
-      if(result.status==="success"){
-        loginCard.style.animation = 'pulse 0.6s ease';
-        setTimeout(() => { loginCard.style.animation = ''; }, 600);
-        
-        saveRentalHistory(input, result.data);
-        localStorage.setItem('ent_user_v4',JSON.stringify(result.data));
-        localStorage.setItem('ent_last_code', input);
-        localStorage.setItem('ent_last_login', Date.now());
-        showPanel();
-      }else{
-        loginCard.classList.add('shake');
-        codeInput.style.borderColor = 'var(--danger)';
-        setTimeout(() => {
-          loginCard.classList.remove('shake');
-          codeInput.style.borderColor = 'rgba(255,255,255,0.1)';
-        }, 400);
-        alert(dict[currentLang].alertCode);
-      }
-    }catch(e){
-      alert("Bağlantı hatası!");
-    }finally{hideLoading();}
-  }
-
-  function checkUrgency(dateStr){
-    try{
-      const parts=dateStr.split(/[. :]/);
-      const day=parseInt(parts[0]),month=parseInt(parts[1])-1,year=parseInt(parts[2]);
-      const hour=parts[3]?parseInt(parts[3]):12,min=parts[4]?parseInt(parts[4]):0;
-      const targetDate=new Date(year,month,day,hour,min),now=new Date();
-      const diff=targetDate-now;
-      const dateBox=document.getElementById('dateBox');
-      if(diff>0&&diff<(24*60*60*1000))dateBox.classList.add('warning-pulse');else dateBox.classList.remove('warning-pulse');
-    }catch(e){}
-  }
-  function showPanel(){
-    const u=JSON.parse(localStorage.getItem('ent_user_v4'));
-    if(u){
-      document.getElementById('vName').innerText=u.n;
-      document.getElementById('vPlate').innerText=u.p;
-      document.getElementById('vCar').innerText=u.c;
-      document.getElementById('vDate').innerText=u.d;
-      document.getElementById('vOffice').innerText=u.o;
-      checkUrgency(u.d);
-      document.getElementById('loginPage').style.display='none';
-      document.getElementById('panelPage').style.display='block';
-      loadWeather();
-      loadHistory();
-      
-      // ===== PANELİ HER ZAMAN AÇIK BAŞLAT =====
-      const gridArea = document.getElementById('gridArea');
-      const arrowGrid = document.getElementById('arrowGrid');
-      if (gridArea && arrowGrid) {
-        gridArea.style.display = 'block';
-        gridArea.classList.add('active');
-        arrowGrid.style.transform = 'rotate(180deg)';
-      }
-    }
-  }
-  function goPage(page){showLoading();setTimeout(()=>{window.location.href=(page.includes('?')?page:`${page}?lang=${currentLang}`);},800);}
-  function toggleAcc(id,arrowId){
-    const m=document.getElementById(id);
-    const a=document.getElementById(arrowId);
-    if(!m.classList.contains('active')){
-      m.style.display='block';
-      m.classList.add('active');
-      a.style.transform='rotate(180deg)';
-    }else{
-      m.classList.remove('active');
-      a.style.transform='rotate(0deg)';
-      setTimeout(()=>{ m.style.display='none'; },10);
-    }
-  }
-  function toggleLang(e){e.stopPropagation();document.getElementById('langBox').classList.toggle('active');}
-  function changeLang(lang){
-    currentLang=lang;
-    localStorage.setItem('ent_lang',lang);
-    updateUI();
-    document.getElementById('langBox').classList.remove('active');
-  }
-
-  /* ===== GEÇMİŞ KİRALAMA KAYITLARI ===== */
-  function saveRentalHistory(code, data){
-    const history=JSON.parse(localStorage.getItem('rentalHistory')||'[]');
-    const now=new Date();
-    const exists=history.some(h=>h.code===code && h.plate===data.p && h.date===data.d);
-    if(!exists){
-      history.push({
-        code: code,
-        name: data.n,
-        plate: data.p,
-        car: data.c,
-        date: data.d,
-        office: data.o,
-        timestamp: now.toISOString()
-      });
-    }
-    const filtered=history.filter(h=>{
-      const days=(now-new Date(h.timestamp))/(1000*60*60*24);
-      return days<30;
-    });
-    localStorage.setItem('rentalHistory',JSON.stringify(filtered));
-  }
-  function loadHistory(){
-    const code=localStorage.getItem('ent_last_code');
-    if(!code)return;
-    const history=JSON.parse(localStorage.getItem('rentalHistory')||'[]');
-    const filtered=history.filter(h=>h.code===code);
-    const list=document.getElementById('historyList');
-    const card=document.getElementById('historyCard');
-    if(filtered.length>0){
-      card.classList.add('active');
-      list.innerHTML='';
-      filtered.slice(-5).reverse().forEach(h=>{
-        const parts=h.date.split(/[. :]/);
-        const day=parseInt(parts[0]),month=parseInt(parts[1])-1,year=parseInt(parts[2]);
-        const hour=parts[3]?parseInt(parts[3]):12,min=parts[4]?parseInt(parts[4]):0;
-        const returnDate=new Date(year,month,day,hour,min);
-        const now=new Date();
-        const isActive=returnDate>now;
-        const displayDate=isActive?'Aktif':h.date;
-        
-        const item=document.createElement('div');
-        item.className='history-item';
-        item.innerHTML=`
-          <div>
-            <div class="history-item-plate">${h.plate}</div>
-            <div class="history-item-car">${h.car}</div>
-          </div>
-          <div class="history-item-date">${displayDate}</div>
-        `;
-        list.appendChild(item);
-      });
-    }
-  }
-
-  /* ===== DROPDOWN BÖLGE SEÇENEKLERİNİ DİLE GÖRE YENİLE ===== */
-  function refillDamageOptions(){
-    const select=document.getElementById('dmgPart');
-    select.innerHTML='';
-    const def=document.createElement('option');
-    def.value=''; def.id='dmgSelDef'; def.innerText=dict[currentLang].dmgSelDef;
-    select.appendChild(def);
-    dict[currentLang].dmgOptions.forEach(opt=>{
-      const o=document.createElement('option');
-      o.innerText=opt;
-      select.appendChild(o);
-    });
-  }
-
-  function updateUI(){
-    const d=dict[currentLang];
-    Object.keys(d).forEach(k=>{
-      const el=document.getElementById(k);
-      if(el)el.innerText=d[k];
-    });
-    document.getElementById('dmgTitle').innerText=d.dmgTitle;
-    document.getElementById('dmgLabelArea').innerText=d.dmgLabelArea;
-    document.getElementById('dmgLabelDesc').innerText=d.dmgLabelDesc;
-    document.getElementById('dmgBtnCancel').innerText=d.dmgBtnCancel;
-    document.getElementById('dmgBtnSend').innerText=d.dmgBtnSend;
-    document.getElementById('dmgDescModal').placeholder=d.dmgLabelDesc;
-    document.getElementById('historyTitle').innerText=d.txtHistoryTitle;
-    document.getElementById('routeTitle').innerText=d.routeTitle;
-    document.getElementById('currentLangText').innerText=currentLang.toUpperCase();
-    document.getElementById('currentFlag').src=`https://flagicons.lipis.dev/flags/4x3/${d.flag}.svg`;
-    refillDamageOptions();
-    document.getElementById('codeInput').placeholder=d.placeholder;
-    document.getElementById('btnText').innerText = d.txtLoginBtn;
-  }
-  function initTheme(){
-    if(localStorage.getItem('ent_theme')==='dark'){
-      document.body.setAttribute('data-theme','dark');
-      document.getElementById('themeBtn').innerHTML='<i class="fas fa-sun"></i>';
-    }
-  }
-  document.getElementById('themeBtn').onclick=()=>{
-    const isDark=document.body.getAttribute('data-theme')==='dark';
-    if(!isDark){document.body.setAttribute('data-theme','dark');localStorage.setItem('ent_theme','dark');}
-    else{document.body.removeAttribute('data-theme');localStorage.setItem('ent_theme','light');}
-    document.getElementById('themeBtn').innerHTML=!isDark?'<i class="fas fa-sun"></i>':'<i class="fas fa-moon"></i>';
-  };
-  function openImg(src){document.getElementById('modalImg').src=src;document.getElementById('imageModal').classList.add('active');}
-  function closeModal(){document.getElementById('imageModal').classList.remove('active');}
-  function logout(){localStorage.removeItem('ent_user_v4');location.reload();}
-
-  /* ===== HASAR MODAL FONKSİYONLARI ===== */
-  function openDamageModal(){
-    document.getElementById('damageModal').classList.add('active');
-  }
-  function closeDamageModal(event){
-    if(event && event.target !== document.getElementById('damageModal')) return;
-    document.getElementById('damageModal').classList.remove('active');
-  }
-  function sendDamageFromModal(){
-    const u=JSON.parse(localStorage.getItem('ent_user_v4'));
-    const part=document.getElementById('dmgPart').value.trim();
-    const desc=document.getElementById('dmgDescModal').value.trim();
-    if(!part || !desc){alert(dict[currentLang].alertFill);return;}
-    const msg=`🚨 *HASAR BİLDİRİMİ*%0A%0A👤 *Müşteri:* ${u.n}%0A🚗 *Plaka:* ${u.p}%0A📍 *Bölge:* ${part}%0A📝 *Açıklama:* ${desc}`;
-    window.open(`https://wa.me/905348901032?text=${msg}`,'_blank');
-    closeDamageModal();
-  }
-
-  /* ========== ROTA PLANLAYICI ========== */
-  function openRoutePlanner(){
-    document.getElementById('routeModal').classList.add('active');
-  }
-  function closeRouteModal(event){
-    if(event && event.target !== document.getElementById('routeModal')) return;
-    document.getElementById('routeModal').classList.remove('active');
-    document.getElementById('routeResult').classList.remove('show');
-  }
-  async function calculateRoute(){
-    const start=document.getElementById('routeStart').value.trim();
-    const end=document.getElementById('routeEnd').value.trim();
-    if(!start || !end){alert('Lütfen başlangıç ve varış noktalarını girin');return;}
-    const startCoords=await geocodeAddress(start);
-    const endCoords=await geocodeAddress(end);
-    if(!startCoords || !endCoords){alert('Adresler bulunamadı');return;}
-    const km=haversineDistance(startCoords.lat,startCoords.lng,endCoords.lat,endCoords.lng);
-    const fuelType=document.getElementById('fuelType').value;
-    const fuelPrices={benzin:54.00,dizel:56.00};
-    const consumption=7;
-    const fuelNeeded=(km*consumption/100).toFixed(1);
-    const totalCost=(fuelNeeded*fuelPrices[fuelType]).toFixed(2);
-    document.getElementById('routeResult').innerHTML=`
-      <div style="margin-bottom:8px;"><b>Mesafe:</b> ${km.toFixed(1)} km</div>
-      <div style="margin-bottom:8px;"><b>Yakıt:</b> ${fuelNeeded} L</div>
-      <div style="margin-bottom:8px;"><b>Maliyet:</b> ${totalCost} TL</div>
-      <div style="font-size:11px;opacity:.7;">*Ortalama ${consumption}L/100km, ${fuelType} ${fuelPrices[fuelType]}TL/L</div>
-    `;
-    document.getElementById('routeResult').classList.add('show');
-  }
-  async function geocodeAddress(address){
-    const url=`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&limit=1`;
-    try{
-      const res=await fetch(url,{headers:{'Accept-Language':'tr-TR'}});
-      const data=await res.json();
-      if(data && data.length>0){
-        return {lat:parseFloat(data[0].lat),lng:parseFloat(data[0].lon)};
-      }
-      return null;
-    }catch(e){
-      return null;
-    }
-  }
-  function haversineDistance(lat1,lon1,lat2,lon2){
-    const R=6371;
-    const dLat=(lat2-lat1)*Math.PI/180;
-    const dLon=(lon2-lon1)*Math.PI/180;
-    const a=Math.sin(dLat/2)*Math.sin(dLat/2)+
-            Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*
-            Math.sin(dLon/2)*Math.sin(dLon/2);
-    const c=2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
-    return R*c;
-  }
-
-  /* ========== KONUM VE HAVA DURUMU YÖNETİMİ ========== */
-  function saveLocation(lat, lon){
-    localStorage.setItem('user_location', JSON.stringify({
-      lat: lat,
-      lon: lon,
-      timestamp: Date.now()
-    }));
-  }
-  
-  function getSavedLocation(){
-    const saved = localStorage.getItem('user_location');
-    if(!saved) return null;
-    const data = JSON.parse(saved);
-    const age = Date.now() - data.timestamp;
-    const maxAge = 24 * 60 * 60 * 1000;
-    if(age > maxAge){
-      localStorage.removeItem('user_location');
-      return null;
-    }
-    return data;
-  }
-  
-  async function requestLocationPermission(){
-    const weatherChip = document.getElementById('miniWeather');
-    weatherChip.classList.add('loading');
-    
-    if(navigator.geolocation){
-      navigator.geolocation.getCurrentPosition(
-        async (position) => {
-          const lat = position.coords.latitude;
-          const lon = position.coords.longitude;
-          saveLocation(lat, lon);
-          await loadWeather();
-          weatherChip.classList.remove('loading');
-        },
-        async (error) => {
-          console.log('Konum alınamadı, kayıtlı konum kullanılıyor');
-          await loadWeather();
-          weatherChip.classList.remove('loading');
-        },
-        {
-          enableHighAccuracy: false,
-          timeout: 10000,
-          maximumAge: 60 * 60 * 1000
+        function showLoading() {
+            document.getElementById('loadText').innerText = dict[currentLang].load;
+            document.getElementById('loadingOverlay').style.display = 'flex';
         }
-      );
-    }else{
-      weatherChip.classList.remove('loading');
-    }
-  }
-  
-  /* ========== GÜNCEL HAVA DURUMU WIDGET ========== */
-  async function loadWeather(){
-    const savedLocation = getSavedLocation();
-    const weatherChip = document.getElementById('miniWeather');
-    
-    if(savedLocation){
-      weatherChip.title = `Enlem: ${savedLocation.lat.toFixed(2)}, Boylam: ${savedLocation.lon.toFixed(2)}`;
-    }
-    
-    const lat = savedLocation ? savedLocation.lat : 38.4237;
-    const lon = savedLocation ? savedLocation.lon : 27.1428;
-    
-    const url=`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&timezone=Europe%2FIstanbul`;
-    try{
-      const r=await fetch(url);
-      const j=await r.json();
-      const temp=j.current_weather.temperature;
-      const code=j.current_weather.weathercode;
-      const iconClass=[51,53,55,61,63,65].includes(code)?'fa-cloud-rain':'fa-cloud-sun';
-      document.getElementById('miniTemp').textContent=temp+'°';
-      document.querySelector('#miniWeather i').className='fas '+iconClass;
-    }catch(e){
-      document.getElementById('miniTemp').textContent='--°';
-    }
-  }
+        function hideLoading() { document.getElementById('loadingOverlay').style.display = 'none'; }
 
-  window.onload=()=>{
-    initTheme();updateUI();if(localStorage.getItem('ent_user_v4'))showPanel();
-    document.getElementById('codeInput').addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') login();
-    });
-  };
-</script>
+        async function login() {
+            const input = document.getElementById('codeInput').value.trim().toUpperCase();
+            if(input.length < 3) return;
+            showLoading();
+            
+            try {
+                // Apps Script'e plaka yerine 'kod' parametresi gönderiyoruz
+                const res = await fetch(`${API_URL}?kod=${input}`);
+                const result = await res.json();
+                
+                if(result.status === "success") {
+                    localStorage.setItem('ent_user_v4', JSON.stringify(result.data));
+                    showPanel();
+                } else { 
+                    alert(dict[currentLang].alertCode); 
+                }
+            } catch (e) { 
+                alert("Bağlantı hatası!"); 
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function checkUrgency(dateStr) {
+            try {
+                const parts = dateStr.split(/[. :]/);
+                const day = parseInt(parts[0]), month = parseInt(parts[1]) - 1, year = parseInt(parts[2]);
+                const hour = parts[3] ? parseInt(parts[3]) : 12, min = parts[4] ? parseInt(parts[4]) : 0;
+                const targetDate = new Date(year, month, day, hour, min), now = new Date();
+                const diff = targetDate - now;
+                const dateBox = document.getElementById('dateBox');
+                if (diff > 0 && diff < (24 * 60 * 60 * 1000)) dateBox.classList.add('warning-pulse');
+                else dateBox.classList.remove('warning-pulse');
+            } catch(e) {}
+        }
+
+        function showPanel() {
+            const u = JSON.parse(localStorage.getItem('ent_user_v4'));
+            if(u) {
+                document.getElementById('vName').innerText = u.n;
+                document.getElementById('vPlate').innerText = u.p;
+                document.getElementById('vCar').innerText = u.c;
+                document.getElementById('vDate').innerText = u.d;
+                document.getElementById('vOffice').innerText = u.o;
+                checkUrgency(u.d);
+                document.getElementById('loginPage').style.display = 'none';
+                document.getElementById('panelPage').style.display = 'block';
+            }
+        }
+
+        function goPage(page) {
+            showLoading();
+            setTimeout(() => { window.location.href = (page.includes('?') ? page : `${page}?lang=${currentLang}`); }, 800);
+        }
+
+        function toggleAcc(id, arrowId) {
+            const m = document.getElementById(id), a = document.getElementById(arrowId);
+            if(!m.classList.contains('active')) { m.classList.add('active'); a.style.transform = 'rotate(180deg)'; }
+            else { m.classList.remove('active'); a.style.transform = 'rotate(0deg)'; }
+        }
+
+        function sendDamage() {
+            const u = JSON.parse(localStorage.getItem('ent_user_v4'));
+            const area = document.getElementById('dmgAreaInput').value.trim(), desc = document.getElementById('dmgDescInput').value.trim();
+            if(!area || !desc) { alert(dict[currentLang].alertFill); return; }
+            const msg = `🚨 *HASAR BİLDİRİMİ*%0A%0A👤 *Müşteri:* ${u.n}%0A🚗 *Plaka:* ${u.p}%0A📍 *Bölge:* ${area}%0A📝 *Açıklama:* ${desc}`;
+            window.open(`https://wa.me/905348901032?text=${msg}`, '_blank');
+        }
+
+        function toggleLang(e) { e.stopPropagation(); document.getElementById('langBox').classList.toggle('active'); }
+        
+        function changeLang(lang) {
+            currentLang = lang;
+            localStorage.setItem('ent_lang', lang);
+            updateUI();
+            document.getElementById('langBox').classList.remove('active');
+        }
+
+        function updateUI() {
+            const d = dict[currentLang];
+            Object.keys(d).forEach(k => { 
+                const el = document.getElementById(k);
+                if(el) el.innerText = d[k]; 
+            });
+            document.getElementById('dmgAreaInput').placeholder = d.dmgArea;
+            document.getElementById('dmgDescInput').placeholder = d.dmgDesc;
+            document.getElementById('codeInput').placeholder = d.placeholder;
+            document.getElementById('currentLangText').innerText = currentLang.toUpperCase();
+            document.getElementById('currentFlag').src = `https://flagicons.lipis.dev/flags/4x3/${d.flag}.svg`;
+        }
+
+        function initTheme() {
+            if(localStorage.getItem('ent_theme') === 'dark') {
+                document.body.setAttribute('data-theme', 'dark');
+                document.getElementById('themeBtn').innerHTML = '<i class="fas fa-sun"></i>';
+            }
+        }
+
+        document.getElementById('themeBtn').onclick = () => {
+            const isDark = document.body.getAttribute('data-theme') === 'dark';
+            if(!isDark) { document.body.setAttribute('data-theme', 'dark'); localStorage.setItem('ent_theme', 'dark'); }
+            else { document.body.removeAttribute('data-theme'); localStorage.setItem('ent_theme', 'light'); }
+            document.getElementById('themeBtn').innerHTML = !isDark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+        };
+
+        function openImg(src) { document.getElementById('modalImg').src = src; document.getElementById('imageModal').classList.add('active'); }
+        function closeModal() { document.getElementById('imageModal').classList.remove('active'); }
+        function logout() { localStorage.removeItem('ent_user_v4'); location.reload(); }
+
+        window.onclick = () => document.getElementById('langBox').classList.remove('active');
+        window.onload = () => { initTheme(); updateUI(); if(localStorage.getItem('ent_user_v4')) showPanel(); };
+    </script>
 </body>
 </html>
